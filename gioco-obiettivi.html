@@ -1,0 +1,1375 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Gioco a obiettivi: dalla pellicola al sensore digitale, con il metodo studia, fai, ripeti.">
+<meta name="color-scheme" content="light dark">
+<title>Gioco a obiettivi – Dalla pellicola al sensore digitale</title>
+<script>
+function imgFail(i){var p=document.createElement('p');p.className='imgfail';p.textContent='Immagine non disponibile: serve una connessione Internet. Puoi aprirla dal link “File” qui sotto.';i.replaceWith(p)}
+(function(){var t;try{t=localStorage.getItem('theme')}catch(e){}
+if(t!=='dark'&&t!=='light'){t=(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light'}
+document.documentElement.setAttribute('data-theme',t)})();
+</script>
+<style>
+:root{
+--bg:#eef2f3;--card:#fff;--ink:#1c2e3d;--muted:#566a7a;--accent:#1f7a82;--accent2:#c27d1c;--line:#d9e1e5;--soft:#f0f5f6;--link:#16666f;--heading:#173f52;--ray:#e0a030;
+--amber-bg:#fbefd6;--amber-bd:#d1a45a;--teal-bg:#d9efed;--teal-bd:#6fb0aa;--blue-bg:#e2ecf5;--blue-bd:#8aa7c2;--green-bg:#e0f1e3;--green-bd:#82b48f;--rose-bg:#f8e3e1;--rose-bd:#d09a96;--violet-bg:#e9e6f5;--violet-bd:#a59bcf;--gray-bg:#e9edf0;--gray-bd:#a2b0ba;--dark-bg:#26394d;
+--shadow:0 4px 18px rgba(32,50,71,.08);color-scheme:light}
+[data-theme=dark]{
+--bg:#0e1418;--card:#161e25;--ink:#e2eaf0;--muted:#9db0bc;--accent:#4fc3c9;--accent2:#e3ad5a;--line:#2a3640;--soft:#1b262d;--link:#7fd6db;--heading:#a9dde2;--ray:#f0b445;
+--amber-bg:#3a2d17;--amber-bd:#8c6a2c;--teal-bg:#17393a;--teal-bd:#2f7a7c;--blue-bg:#1b2c3e;--blue-bd:#476b8e;--green-bg:#1b3523;--green-bd:#3f7a50;--rose-bg:#3d2224;--rose-bd:#85504f;--violet-bg:#2a2644;--violet-bd:#675ca0;--gray-bg:#232d34;--gray-bd:#55656f;--dark-bg:#0a1016;
+--shadow:0 4px 18px rgba(0,0,0,.35);color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:17px;line-height:1.72;transition:background .25s,color .25s}
+.bar{position:sticky;top:0;z-index:40;display:flex;align-items:center;gap:10px;padding:8px 12px;padding-top:calc(8px + env(safe-area-inset-top));background:var(--card);border-bottom:1px solid var(--line)}
+.bar .bt{flex:1;min-width:0;font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--heading)}
+.ib{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:999px;padding:7px 13px;font:inherit;font-size:.85rem;cursor:pointer;min-height:38px}
+.ib:hover{border-color:var(--accent)}
+.prog{position:absolute;left:0;bottom:-1px;height:3px;width:0;background:var(--accent)}
+.drawer{position:fixed;z-index:60;top:0;bottom:0;left:0;width:min(88vw,350px);background:var(--card);border-right:1px solid var(--line);box-shadow:var(--shadow);transform:translateX(-102%);visibility:hidden;transition:transform .25s,visibility .25s;display:flex;flex-direction:column}
+.drawer.open{transform:none;visibility:visible}
+.drawer header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line);font-weight:700;color:var(--heading)}
+.drawer ol{list-style:none;margin:0;padding:8px 8px 30px;overflow:auto;flex:1}
+.drawer li a{display:block;padding:8px 12px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:.92rem;line-height:1.35}
+.drawer li.sub a{padding-left:28px;font-size:.84rem;color:var(--muted)}
+.drawer li a:hover{background:var(--soft);color:var(--link)}
+.scrim{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s}
+.scrim.open{opacity:1;pointer-events:auto}
+.hero{background:linear-gradient(125deg,#17344a,#27606a);color:#fff;padding:44px 20px 40px}
+[data-theme=dark] .hero{background:linear-gradient(125deg,#0f2231,#173e46)}
+.hero-in{max-width:760px;margin:auto}
+.eyebrow{text-transform:uppercase;letter-spacing:.14em;font-size:.74rem;font-weight:700;color:#bfe3e1}
+.hero h1{font-size:clamp(1.9rem,7vw,3rem);line-height:1.12;margin:.4rem 0 .9rem}
+.hero p{margin:0;color:#dbe9ee;font-size:1.05rem}
+.meta{margin-top:18px;font-size:.85rem;color:#b9d0d8}
+.wrap{max-width:800px;margin:18px auto;padding:0 12px}
+main{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,4.5vw,44px);box-shadow:var(--shadow)}
+main h2{font-size:1.5rem;line-height:1.25;margin:2.4em 0 .7em;padding-top:.9em;border-top:1px solid var(--line);color:var(--heading);scroll-margin-top:72px}
+main h2:first-child{margin-top:0;border-top:0;padding-top:0}
+main h3{font-size:1.15rem;line-height:1.35;margin:1.9em 0 .6em;color:var(--accent);scroll-margin-top:72px}
+main p{margin:.7em 0 1em}
+main ul,main ol{padding-left:1.3em}
+main li{margin:.45em 0}
+main strong{color:var(--heading)}
+main a{color:var(--link);text-underline-offset:2px;word-break:break-word}
+main hr{border:0;border-top:1px solid var(--line);margin:2em 0}
+.box{border-radius:12px;padding:12px 16px 10px;margin:1.3em 0;border:1px solid;border-left-width:5px}
+.box .lab{display:block;font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;font-weight:800;margin-bottom:2px}
+.box p{margin:.35em 0}.box ul{margin:.3em 0}
+.tip{background:var(--teal-bg);border-color:var(--teal-bd)}.tip .lab{color:var(--accent)}
+.ex{background:var(--amber-bg);border-color:var(--amber-bd)}.ex .lab{color:var(--accent2)}
+.warn{background:var(--rose-bg);border-color:var(--rose-bd)}.warn .lab{color:#b0524c}
+[data-theme=dark] .warn .lab{color:#ec9a94}
+.rem{background:var(--violet-bg);border-color:var(--violet-bd)}.rem .lab{color:#6b5fb0}
+[data-theme=dark] .rem .lab{color:#b4a9ec}
+.fig{margin:1.5em 0 1.8em;padding:12px 10px 10px;background:var(--soft);border:1px solid var(--line);border-radius:14px}
+.fig svg{display:block;width:100%;height:auto;max-width:520px;margin:0 auto}
+.fig figcaption{font-size:.82rem;color:var(--muted);text-align:center;margin:10px auto 0;max-width:560px;line-height:1.5}
+table{border-collapse:collapse;width:100%;margin:1.2em 0 1.5em;font-size:.93rem}
+th,td{padding:9px 11px;border:1px solid var(--line);vertical-align:top;text-align:left}
+th{background:var(--soft);color:var(--heading)}
+td.r,th.r{text-align:right}
+@media(max-width:640px){
+ table.resp thead{display:none}
+ table.resp,table.resp tbody,table.resp tr,table.resp td{display:block;width:100%}
+ table.resp tr{border:1px solid var(--line);border-radius:12px;margin:0 0 12px;padding:4px 12px;background:var(--soft)}
+ table.resp td{border:0;border-bottom:1px dashed var(--line);padding:7px 0}
+ table.resp td:last-child{border-bottom:0}
+ table.resp td::before{content:attr(data-label);display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--accent)}
+ table.resp td:first-child{font-weight:700}
+}
+dl.gl dt{font-weight:700;color:var(--heading);margin-top:.9em}
+dl.gl dd{margin:.1em 0 0}
+.tl{list-style:none;padding:0;margin:1.2em 0;border-left:3px solid var(--line);margin-left:8px}
+.tl li{position:relative;margin:0 0 1.2em;padding-left:20px}
+.tl li::before{content:"";position:absolute;left:-10px;top:.5em;width:15px;height:15px;border-radius:50%;background:var(--accent);border:3px solid var(--card)}
+.tl .y{display:block;font-weight:800;color:var(--accent);font-size:1.02rem}
+.tl .w{display:block;color:var(--muted);font-size:.92rem}
+details.src{border:1px solid var(--line);border-radius:12px;padding:6px 14px;margin:1em 0;background:var(--soft)}
+details.src summary{cursor:pointer;font-weight:700;color:var(--heading);padding:6px 0}
+details.src h3{font-size:1rem}
+details.src ol{font-size:.88rem}
+footer{max-width:800px;margin:0 auto;padding:6px 16px 40px;color:var(--muted);font-size:.82rem;text-align:center}
+.fig.photo{background:var(--card);position:relative}
+.fig.photo img{width:100%;height:auto;max-height:440px;object-fit:contain;display:block;margin:0 auto;border-radius:8px;background:#fff;min-height:60px}
+.badge{display:inline-block;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:var(--accent);border:1px solid var(--teal-bd);background:var(--teal-bg);border-radius:999px;padding:2px 10px;margin-bottom:8px}
+.cred{display:block;margin-top:4px;font-size:.76rem;color:var(--muted)}
+.imgfail{margin:0;padding:18px 14px;text-align:center;color:var(--muted);font-size:.9rem;border:1px dashed var(--line);border-radius:8px}
+.toctop{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:14px 16px 8px;margin:0 0 1.8em}
+.toctop .tt{font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.76rem;color:var(--accent);margin-bottom:6px}
+.toctop ol{margin:0;padding-left:0;list-style:none;columns:2;column-gap:28px;font-size:.92rem;line-height:1.4}
+.toctop li{margin:.35em 0;break-inside:avoid}
+.toctop a{color:var(--ink);text-decoration:none}
+.toctop a:hover{color:var(--link);text-decoration:underline}
+@media(max-width:640px){.toctop ol{columns:1}}
+@media print{.badge{display:none}}
+/* SVG */
+svg text{font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:13px;fill:var(--ink)}
+svg .s{font-size:12px;fill:var(--muted)}
+svg .h{font-size:15px;font-weight:700}
+svg .b{font-weight:700}
+svg .c{text-anchor:middle}svg .e{text-anchor:end}
+svg .w{fill:#eaf1f5}
+svg .fa{fill:var(--amber-bg);stroke:var(--amber-bd);stroke-width:2}
+svg .ft{fill:var(--teal-bg);stroke:var(--teal-bd);stroke-width:2}
+svg .fb{fill:var(--blue-bg);stroke:var(--blue-bd);stroke-width:2}
+svg .fg{fill:var(--green-bg);stroke:var(--green-bd);stroke-width:2}
+svg .fr{fill:var(--rose-bg);stroke:var(--rose-bd);stroke-width:2}
+svg .fv{fill:var(--violet-bg);stroke:var(--violet-bd);stroke-width:2}
+svg .fx{fill:var(--gray-bg);stroke:var(--gray-bd);stroke-width:2}
+svg .fd{fill:var(--dark-bg);stroke:var(--gray-bd);stroke-width:1.5}
+svg .fc{fill:var(--card);stroke:var(--gray-bd);stroke-width:1.5}
+svg .fk{fill:var(--ink)}
+svg .ln{stroke:var(--accent);stroke-width:3;fill:none}
+svg .lr{stroke:var(--ray);stroke-width:4;fill:none}
+svg .ar{stroke:var(--accent);stroke-width:3;fill:none;marker-end:url(#arr)}
+svg .ar2{stroke:var(--ray);stroke-width:3.5;fill:none;marker-end:url(#arr2)}
+svg .th{stroke:var(--gray-bd);stroke-width:1.5;fill:none}
+svg .ds{stroke-dasharray:5 4}
+svg .k{stroke:var(--ink);stroke-width:5;fill:none;stroke-linecap:round}
+.mk{fill:var(--accent)}.mk2{fill:var(--ray)}
+@media print{
+ body{background:#fff;color:#000;font-size:11pt}
+ .bar,.drawer,.scrim,.meta{display:none!important}
+ .hero{background:#fff!important;color:#000;padding:0 0 12px}.hero p{color:#333}
+ main{border:0;box-shadow:none;padding:0}.fig{break-inside:avoid}
+ main h2,main h3{break-after:avoid}details.src{display:block}
+}
+
+/* gioco */
+.xpc{cursor:default;font-weight:700;color:var(--heading);white-space:nowrap}
+.hero .lv{display:inline-block;margin-top:14px;padding:4px 14px;border-radius:999px;background:rgba(255,255,255,.16);font-weight:800}
+.xpbar{height:12px;border-radius:8px;background:rgba(255,255,255,.2);overflow:hidden;margin:12px 0 6px}
+.xpbar i{display:block;height:100%;width:0;background:var(--ray);transition:width .4s}
+.hero .xpt{font-size:.9rem;color:#dbe9ee}
+.hero .ib{margin-top:12px;background:transparent;color:#fff;border-color:rgba(255,255,255,.45)}
+.map{display:grid;grid-template-columns:repeat(auto-fill,minmax(62px,1fr));gap:8px;margin:6px 0 10px}
+.tile{display:flex;flex-direction:column;align-items:center;padding:8px 4px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);text-decoration:none;font-size:.76rem}
+.tile b{font-size:1.15rem;color:var(--heading)}
+.tile.done{background:var(--green-bg);border-color:var(--green-bd)}
+.tile.done b::after{content:" ★"}
+.sec{border-top:1px solid var(--line);margin-top:2.4em;padding-top:1.4em}
+.sec>h2:first-child{border-top:0;padding-top:0;margin-top:0}
+.cmeta{display:flex;flex-wrap:wrap;gap:8px;margin:-.2em 0 .4em}
+.chip{display:inline-block;font-size:.74rem;font-weight:800;letter-spacing:.06em;border:1px solid var(--teal-bd);background:var(--teal-bg);color:var(--accent);border-radius:999px;padding:2px 11px}
+.tabs{display:flex;border-bottom:1px solid var(--line);margin:.8em 0 1.1em}
+.tabs button{flex:1;min-height:48px;background:none;border:0;border-bottom:3px solid transparent;font:inherit;font-weight:700;font-size:.95rem;color:var(--muted);cursor:pointer}
+.tabs button small{font-weight:600;font-size:.74rem}
+.tabs button[aria-selected=true]{color:var(--accent);border-color:var(--accent)}
+.pn[hidden],#bossOpen[hidden]{display:none}
+.step{font-weight:700;color:var(--accent);margin:1.2em 0 .5em}
+.goal{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;margin:10px 0;border:1px solid var(--line);border-radius:12px;background:var(--soft);cursor:pointer}
+.goal input{width:24px;height:24px;flex:none;margin-top:2px;accent-color:var(--accent)}
+.goal .t{flex:1}
+.goal .x{font-size:.76rem;font-weight:800;color:var(--accent2);white-space:nowrap}
+.goal:has(input:checked){background:var(--green-bg);border-color:var(--green-bd)}
+.ph{display:block;font-size:.8rem;color:var(--muted);margin-top:2px}
+#toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translate(-50%,40px);opacity:0;background:var(--dark-bg);color:#fff;padding:12px 20px;border-radius:999px;font-weight:700;z-index:80;transition:.3s;pointer-events:none;max-width:92vw;text-align:center}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+footer{padding-bottom:calc(40px + env(safe-area-inset-bottom))}
+:focus-visible{outline:3px solid var(--ray);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+@media print{.tabs,.map,#toast,.hero .ib,.goal input{display:none}.pn[hidden]{display:block!important}.sec{break-inside:auto}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+<marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" class="mk"/></marker>
+<marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" class="mk2"/></marker>
+</defs></svg>
+
+
+<header class="bar">
+<button class="ib" id="menuBtn" type="button" aria-label="Apri l’indice" aria-expanded="false" aria-controls="drawer">☰ <span>Indice</span></button>
+<span class="bt">Pellicola e sensori</span>
+<span class="ib xpc" id="xpChip"></span>
+<button class="ib" id="themeBtn" type="button" aria-label="Cambia tema chiaro o scuro"><span id="themeIc" aria-hidden="true">☾</span> <span id="themeTx">Scuro</span></button>
+<div class="prog" id="prog"></div>
+</header>
+<nav class="drawer" id="drawer" aria-label="Indice del gioco">
+<header><span>Indice</span><button class="ib" id="closeBtn" type="button" aria-label="Chiudi l’indice">✕</button></header>
+<ol id="toc"></ol>
+</nav>
+<div class="scrim" id="scrim"></div>
+
+<section class="hero"><div class="hero-in">
+<div class="eyebrow">Gioco a obiettivi · studia, fai, ripeti</div>
+<h1>Dalla pellicola al sensore digitale</h1>
+<p>Trasforma la dispensa in un percorso: 17 capitoli, ognuno con missioni pratiche per la tua Sony A6600 e ripassi a intervalli. Completa gli obiettivi, guadagna XP e diventa il miglior fotografo possibile.</p>
+<div class="lv" id="lvName"></div>
+<div class="xpbar" role="progressbar" aria-label="Esperienza totale"><i id="xpBar"></i></div>
+<div class="xpt" id="xpTxt"></div>
+<button class="ib" id="resetBtn" type="button">Azzera i progressi</button>
+</div></section>
+
+<div class="wrap"><main><article>
+<nav class="toctop" aria-label="Mappa dei capitoli"><div class="tt">Mappa dei capitoli</div><div class="map" id="map"></div></nav>
+<section id="intro" data-nav>
+<h2>Obiettivo della lezione</h2>
+<p>Capire come la luce diventa una fotografia: prima attraverso la <strong>pellicola</strong>, poi attraverso il <strong>sensore digitale</strong>. Obiettivo, diaframma e tempo di scatto funzionano secondo gli stessi principi; cambia il modo in cui la luce viene registrata e trasformata in immagine.</p>
+<div class="box tip"><span class="lab">Come usare questa dispensa</span>
+<p>Leggi prima il testo, poi osserva lo schema: le figure servono a chiarire il concetto. Gli schemi disegnati sono dentro il file e si vedono sempre. Le <strong>foto e i disegni “reali”</strong> (segnati con l’etichetta <em>Immagine da Internet</em>) vengono da Wikimedia Commons e richiedono una connessione. In alto trovi l’<strong>Indice</strong> e il pulsante per cambiare <strong>tema chiaro/scuro</strong>.</p></div>
+
+
+<div class="box tip"><span class="lab">Come funziona il gioco</span><p>Ogni capitolo ha tre tappe: <b>Studia</b> (leggi e segna il capitolo), <b>Fai</b> (due missioni pratiche con la tua fotocamera) e <b>Ripeti</b> (richiamo a voce e tre ripassi a 1, 3 e 7 giorni). Ogni obiettivo dà XP: 95 per capitolo, 1.615 in tutto. Sali di livello fino a Maestro e sblocca la sfida finale.</p></div>
+</section>
+<section class="chap sec" id="c1" data-n="1" data-nav>
+<h2>1. Come nasce una fotografia</h2>
+<div class="cmeta"><span class="chip" id="cm1"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<figure class="fig"><svg viewBox="0 0 360 290" role="img" aria-label="La luce riflessa dalla scena attraversa l'obiettivo e raggiunge la pellicola oppure il sensore">
+<rect class="fa" x="90" y="8" width="180" height="50" rx="12"/><text class="h c" x="180" y="30">SCENA</text><text class="s c" x="180" y="48">luce riflessa</text>
+<path class="ar" d="M180 60V86"/>
+<rect class="fb" x="90" y="88" width="180" height="50" rx="12"/><text class="h c" x="180" y="110">OBIETTIVO</text><text class="s c" x="180" y="128">forma l’immagine</text>
+<path class="ar" d="M180 140V160H92V182"/><path class="ar" d="M180 160H268V182"/>
+<rect class="fa" x="10" y="186" width="165" height="96" rx="12"/><text class="h c" x="92" y="210">PELLICOLA</text><text class="s c" x="92" y="230">fotocamera analogica</text><text class="s c" x="92" y="250">reazione chimica</text><text class="s c" x="92" y="268">→ immagine latente</text>
+<rect class="fg" x="185" y="186" width="165" height="96" rx="12"/><text class="h c" x="268" y="210">SENSORE</text><text class="s c" x="268" y="230">fotocamera digitale</text><text class="s c" x="268" y="250">segnale elettrico</text><text class="s c" x="268" y="268">→ numeri (dati)</text>
+</svg><figcaption>La luce attraversa l’obiettivo e viene registrata da una superficie sensibile: emulsione fotografica oppure sensore elettronico.</figcaption></figure>
+<p>La luce riflessa dal soggetto entra nell’obiettivo e raggiunge una superficie sensibile: la <strong>pellicola</strong> nelle fotocamere analogiche, il <strong>sensore</strong> in quelle digitali.</p>
+<p>Tre elementi regolano l’esposizione:</p>
+<ul>
+<li><strong>Diaframma</strong>: controlla l’apertura dell’obiettivo. Un’apertura ampia lascia entrare più luce; una piccola ne lascia entrare meno.</li>
+<li><strong>Tempo di scatto</strong>: per quanto tempo la luce raggiunge la superficie sensibile. Un tempo lungo raccoglie più luce, ma aumenta il rischio di mosso.</li>
+<li><strong>ISO</strong>: indica la sensibilità della pellicola o l’impostazione di sensibilità della fotocamera digitale. Il risultato pratico è simile, ma il funzionamento è diverso.</li>
+</ul>
+<figure class="fig"><svg viewBox="0 0 360 304" role="img" aria-label="Triangolo dell'esposizione: diaframma, tempo di scatto e ISO con i rispettivi effetti collaterali">
+<polygon class="ft" points="180,44 40,252 320,252"/>
+<text class="h c" x="180" y="26">DIAFRAMMA</text>
+<text class="s" x="206" y="66">effetto:</text><text class="s" x="206" y="82">profondità di campo</text>
+<text class="h c" x="48" y="278">TEMPO</text><text class="s c" x="48" y="296">effetto: mosso</text>
+<text class="h c" x="312" y="278">ISO</text><text class="s c" x="312" y="296">effetto: rumore</text>
+<text class="b c" x="180" y="168">stessa</text><text class="b c" x="180" y="188">luminosità</text>
+<text class="s c" x="180" y="214">se ne cambi uno,</text><text class="s c" x="180" y="230">ricompensi con gli altri</text>
+</svg><figcaption>Il triangolo dell’esposizione: ogni lato ha un “prezzo” diverso.</figcaption></figure>
+<p>Questi elementi formano il <strong>triangolo dell’esposizione</strong>. Modificarne uno può richiedere di modificare anche gli altri per mantenere la stessa luminosità.</p>
+<h3>Lo “stop”: l’unità di misura della luce</h3>
+<p>Fotografi e fotocamere ragionano in <strong>stop</strong> (o EV): un passo equivale a <strong>raddoppiare o dimezzare</strong> la luce. Ogni controllo ha la sua scala a passi:</p>
+<table class="resp">
+<thead><tr><th>Un passo (1 stop)</th><th>Diaframma</th><th>Tempo</th><th>ISO</th></tr></thead>
+<tbody>
+<tr><td>Immagine più luminosa (×2)</td><td>f/4 → f/2.8</td><td>1/250 → 1/125</td><td>200 → 400</td></tr>
+<tr><td>Immagine più scura (÷2)</td><td>f/4 → f/5.6</td><td>1/250 → 1/500</td><td>200 → 100</td></tr>
+</tbody></table>
+<p>Sequenza dei numeri f: <strong>1.4 – 2 – 2.8 – 4 – 5.6 – 8 – 11 – 16</strong>. Un numero f <em>piccolo</em> significa apertura <em>grande</em>. Con gli ISO la luce raccolta non cambia: cambia solo la luminosità finale dell’immagine.</p>
+<div class="box ex"><span class="lab">Esempio</span><p>In una stanza poco illuminata si può aprire il diaframma, usare un tempo più lento oppure aumentare gli ISO. Le conseguenze sono diverse: cambia la profondità di campo, il rischio di mosso o la quantità di rumore visibile.</p></div>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="1-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="1-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Con la modalità A scatta la stessa scena a f/3.5 e a f/8: di quanti stop è cambiato il tempo scelto dalla fotocamera? Annotalo.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="1-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> In modalità M cambia un solo parametro di 1 stop (per esempio 1/125 → 1/250) e compensa con un altro: l’istogramma deve restare simile.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="1-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Spiega a voce, senza guardare, che cos’è uno stop e come lo compensi con diaframma, tempo e ISO.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="1-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="1-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="1-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c2" data-n="2" data-nav>
+<h2>2. La pellicola: come registra la luce</h2>
+<div class="cmeta"><span class="chip" id="cm2"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<figure class="fig"><svg viewBox="0 0 360 150" role="img" aria-label="Striscia di pellicola 35 mm con perforazioni e tre fotogrammi">
+<defs><pattern id="perf" x="0" y="0" width="29" height="14" patternUnits="userSpaceOnUse"><rect x="8" y="3" width="13" height="8" rx="2" fill="var(--card)"/></pattern></defs>
+<rect class="fd" x="0" y="8" width="360" height="104" rx="6"/>
+<rect x="0" y="12" width="360" height="14" fill="url(#perf)"/><rect x="0" y="94" width="360" height="14" fill="url(#perf)"/>
+<g><rect class="fx" x="10" y="31" width="106" height="62"/><circle cx="85" cy="50" r="8" fill="var(--accent2)"/><polygon points="10,93 50,56 80,80 96,66 116,93" fill="var(--accent)" opacity=".75"/></g>
+<g><rect class="fx" x="127" y="31" width="106" height="62"/><circle cx="202" cy="50" r="8" fill="var(--accent2)"/><polygon points="127,93 167,56 197,80 213,66 233,93" fill="var(--accent)" opacity=".75"/></g>
+<g><rect class="fx" x="244" y="31" width="106" height="62"/><circle cx="319" cy="50" r="8" fill="var(--accent2)"/><polygon points="244,93 284,56 314,80 330,66 350,93" fill="var(--accent)" opacity=".75"/></g>
+<text class="s" x="10" y="132">fotogramma: 24 × 36 mm</text><text class="s e" x="350" y="132">perforazioni</text>
+</svg><figcaption>Una striscia di pellicola 35 mm: i fotogrammi sono impressi su una striscia continua (disegno schematico).</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://upload.wikimedia.org/wikipedia/commons/0/02/35mm_movie_negative.jpg" alt="Pellicola negativa 35 mm arrotolata, con fotogrammi e perforazioni" loading="lazy" onerror="imgFail(this)"><figcaption>Un negativo reale: i fotogrammi sono impressi su una striscia continua. <span class="cred">Foto: Runner1616, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>. <a href="https://commons.wikimedia.org/wiki/File:35mm_movie_negative.jpg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<p>La pellicola è una striscia flessibile composta da una base di supporto e da uno strato di gelatina che contiene minuscoli <strong>cristalli di alogenuri d’argento</strong>, sensibili alla luce. Non è corretto dire che tutte le pellicole contengano soltanto cloruro d’argento: si usano diversi alogenuri, soprattutto bromuro, cloruro e ioduro d’argento.</p>
+<figure class="fig"><svg viewBox="0 0 360 252" role="img" aria-label="Sezione schematica di una pellicola a colori: strati sensibili a blu, verde e rosso su una base trasparente">
+<path class="lr ds" d="M40 4V40" style="marker-end:url(#arr2)"/><path class="lr ds" d="M95 4V40" style="marker-end:url(#arr2)"/><path class="lr ds" d="M150 4V40" style="marker-end:url(#arr2)"/>
+<rect class="fx" x="10" y="42" width="170" height="20"/>
+<rect class="fb" x="10" y="62" width="170" height="30"/>
+<rect class="fa" x="10" y="92" width="170" height="20"/>
+<rect class="fg" x="10" y="112" width="170" height="30"/>
+<rect class="fr" x="10" y="142" width="170" height="30"/>
+<rect class="fx" x="10" y="172" width="170" height="44"/>
+<rect class="fd" x="10" y="216" width="170" height="20"/>
+<text class="s" x="190" y="56">strato protettivo</text>
+<text class="s" x="190" y="82">strato sensibile al blu</text>
+<text class="s" x="190" y="106">filtro giallo</text>
+<text class="s" x="190" y="132">strato sensibile al verde</text>
+<text class="s" x="190" y="162">strato sensibile al rosso</text>
+<text class="s" x="190" y="198">base trasparente</text>
+<text class="s" x="190" y="230">strato anti-alone</text>
+</svg><figcaption>Sezione molto semplificata di un negativo a colori. Una pellicola in bianco e nero ha invece un solo strato di emulsione.</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Photographic_film_emulsion_layers.jpg?width=900" alt="Strati dell’emulsione di una pellicola fotografica" loading="lazy" onerror="imgFail(this)"><figcaption>Gli strati dell’emulsione fotografica. <span class="cred">Fonte: Wikimedia Commons (autore e licenza sulla pagina del file). <a href="https://commons.wikimedia.org/wiki/File:Photographic_film_emulsion_layers.jpg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<p>Quando la luce colpisce la pellicola si forma un’immagine chimica invisibile, detta <strong>immagine latente</strong>. Durante lo sviluppo, il rivelatore trasforma i cristalli esposti in argento metallico (nelle pellicole in bianco e nero). Il fissaggio elimina i sali d’argento non sviluppati e rende l’immagine stabile alla luce; seguono lavaggio e asciugatura.</p>
+<figure class="fig"><svg viewBox="0 0 360 332" role="img" aria-label="Quattro fasi: esposizione, immagine latente, sviluppo, fissaggio">
+<g transform="translate(8,6)"><rect class="fx" width="166" height="152" rx="10"/><text class="b" x="10" y="20">1 · Esposizione</text>
+<path class="lr" d="M83 34V48" style="marker-end:url(#arr2)"/><path class="lr" d="M52 68V80" style="marker-end:url(#arr2)"/>
+<circle class="fc" cx="32" cy="92" r="14"/><circle class="fc" cx="83" cy="68" r="14"/><circle class="fc" cx="134" cy="96" r="14"/><circle class="fc" cx="52" cy="124" r="14"/><circle class="fc" cx="112" cy="122" r="14"/>
+<text class="s c" x="83" y="148">la luce colpisce i cristalli</text></g>
+<g transform="translate(186,6)"><rect class="fx" width="166" height="152" rx="10"/><text class="b" x="10" y="20">2 · Immagine latente</text>
+<circle class="fc" cx="32" cy="72" r="14"/><circle class="fc" cx="83" cy="58" r="14"/><circle class="fc" cx="134" cy="76" r="14"/><circle class="fc" cx="52" cy="108" r="14"/><circle class="fc" cx="112" cy="106" r="14"/>
+<circle cx="83" cy="58" r="3.5" fill="var(--accent2)"/><circle cx="52" cy="108" r="3.5" fill="var(--accent2)"/>
+<text class="s c" x="83" y="140">tracce invisibili</text></g>
+<g transform="translate(8,168)"><rect class="fx" width="166" height="152" rx="10"/><text class="b" x="10" y="20">3 · Sviluppo</text>
+<circle class="fc" cx="32" cy="72" r="14"/><circle class="fk" cx="83" cy="58" r="14"/><circle class="fc" cx="134" cy="76" r="14"/><circle class="fk" cx="52" cy="108" r="14"/><circle class="fc" cx="112" cy="106" r="14"/>
+<text class="s c" x="83" y="140">i cristalli esposti → argento</text></g>
+<g transform="translate(186,168)"><rect class="fx" width="166" height="152" rx="10"/><text class="b" x="10" y="20">4 · Fissaggio</text>
+<circle class="th ds" cx="32" cy="72" r="14"/><circle class="fk" cx="83" cy="58" r="14"/><circle class="th ds" cx="134" cy="76" r="14"/><circle class="fk" cx="52" cy="108" r="14"/><circle class="th ds" cx="112" cy="106" r="14"/>
+<text class="s c" x="83" y="140">via i cristalli non esposti</text></g>
+</svg><figcaption>Dall’esposizione all’immagine stabile (schema per il bianco e nero). Dove arriva più luce si forma più argento: il negativo risulta più scuro.</figcaption></figure>
+
+<h3>2.1 I principali tipi di pellicola</h3>
+<ul>
+<li><strong>Bianco e nero</strong>: restituisce tonalità di grigio. L’immagine sviluppata è formata principalmente da argento metallico. La maggior parte delle pellicole B/N moderne è pancromatica, cioè sensibile a quasi tutto lo spettro visibile: deve quindi essere caricata e sviluppata al buio completo. La normale luce rossa della camera oscura non è sicura per queste pellicole.</li>
+<li><strong>Negativo a colori</strong>: contiene più strati sensibili a diverse zone dello spettro, principalmente blu, verde e rosso. Durante lo sviluppo si formano coloranti gialli, magenta e ciano. Il risultato è un negativo: toni e colori sono invertiti e vengono ricostruiti in stampa o scansione. La tipica maschera arancione contribuisce alla corretta resa dei colori in stampa.</li>
+<li><strong>Diapositiva o pellicola invertibile</strong>: produce direttamente un’immagine positiva, osservabile in trasparenza o proiettabile. Il trattamento di sviluppo è più articolato. Richiede un’esposizione precisa, perché offre meno margine di correzione.</li>
+<li><strong>Pellicola istantanea</strong>: contiene già i materiali chimici necessari. Dopo lo scatto, il passaggio tra i rulli distribuisce un reagente tra gli strati e l’immagine si sviluppa autonomamente. Tempi e risultato dipendono dal tipo di pellicola e dalla temperatura.</li>
+</ul>
+
+<h3>2.2 Le caratteristiche principali</h3>
+<p><strong>Sensibilità ISO.</strong> Indica quanta luce serve all’emulsione per ottenere un’esposizione. Una pellicola ISO 400 è più sensibile di una ISO 100 e permette, a parità di condizioni, di usare un tempo più rapido o un diaframma più chiuso. Il valore si sceglie quando si acquista il rullo e normalmente rimane fisso per tutti i fotogrammi. È possibile forzare l’esposizione e compensarla in parte durante lo sviluppo (<em>push</em> o <em>pull</em>), ma non equivale a cambiare liberamente ISO a ogni scatto. I valori ASA storici hanno la stessa numerazione pratica della scala ISO; la scala DIN, invece, era logaritmica ed è oggi poco usata.</p>
+<p><strong>Grana.</strong> È la struttura visibile dei granuli d’argento o dei coloranti nella pellicola sviluppata. Si nota soprattutto con ingrandimenti elevati. In generale, pellicole più sensibili tendono ad avere una grana più evidente, ma contano molto anche la formulazione dell’emulsione e lo sviluppo.</p>
+<p><strong>Contrasto o gradazione.</strong> Descrive quanto nettamente vengono separate le zone chiare da quelle scure. Dipende dalla pellicola, ma anche da esposizione, sviluppo, stampa e illuminazione. Una gradazione morbida rende più graduali le differenze tra luci e ombre; una gradazione dura le accentua. Non è corretto affermare come regola generale che ogni pellicola lenta sia più contrastata di una veloce.</p>
+<p><strong>Latitudine di posa.</strong> È il margine entro cui un errore di esposizione consente ancora di ottenere un risultato accettabile. In generale, i negativi – soprattutto quelli a colori – tollerano alcuni errori meglio delle diapositive. Una forte sottoesposizione può comunque far perdere i dettagli nelle ombre. La latitudine dipende dall’emulsione e dal processo: non aumenta automaticamente con gli ISO.</p>
+<p><strong>Formato.</strong> Indica le dimensioni del fotogramma:</p>
+<ul>
+<li><strong>135 o 35 mm</strong>: la pellicola è larga 35 mm, ma il fotogramma standard misura <strong>24 × 36 mm</strong>. Le perforazioni laterali servono al trascinamento.</li>
+<li><strong>120, medio formato</strong>: pellicola larga circa 61 mm, senza perforazioni e protetta da carta. A seconda della fotocamera produce fotogrammi come 6 × 4,5, 6 × 6, 6 × 7 o 6 × 9 cm.</li>
+<li><strong>220</strong>: larga come la 120 ma lunga il doppio, perché ha solo la carta di testa e di coda invece della carta di protezione continua. Oggi è rara e richiede fotocamere compatibili.</li>
+<li><strong>APS</strong>: formato più piccolo introdotto negli anni Novanta, oggi soprattutto storico.</li>
+</ul>
+<figure class="fig"><svg viewBox="0 0 360 226" role="img" aria-label="Confronto in scala dei fotogrammi: 35 mm, 6x4,5, 6x6, 6x7 e 6x9">
+<rect class="fx" x="10" y="10" width="302" height="202"/>
+<rect class="fv" x="10" y="10" width="252" height="202"/>
+<rect class="fb" x="10" y="10" width="202" height="202"/>
+<rect class="fg" x="10" y="10" width="202" height="149"/>
+<rect class="fa" x="10" y="10" width="130" height="86"/>
+<text class="b" x="18" y="34">35 mm</text><text class="s" x="18" y="52">24 × 36 mm</text>
+<text class="b" x="18" y="122">6 × 4,5 cm</text>
+<text class="b" x="18" y="190">6 × 6 cm</text>
+<text class="b c" x="237" y="116">6×7</text>
+<text class="b c" x="287" y="116">6×9</text>
+</svg><figcaption>Dimensioni dei fotogrammi a confronto, nelle proporzioni reali. Il formato 6×9 ha una superficie circa 5 volte quella del 35 mm.</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Film_127_135_120_IMGP1797_WP.jpg?width=900" alt="Rulli di pellicola nei formati 127, 135 e 120 a confronto" loading="lazy" onerror="imgFail(this)"><figcaption>Rulli di pellicola di formati diversi (127, 135, 120) a confronto. <span class="cred">Fonte: Wikimedia Commons (autore e licenza sulla pagina del file). <a href="https://commons.wikimedia.org/wiki/File:Film_127_135_120_IMGP1797_WP.jpg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<p>A parità di dimensione della stampa, un fotogramma più grande richiede meno ingrandimento e quindi può conservare più dettaglio. Non garantisce da solo una fotografia migliore: contano anche obiettivo, emulsione, esposizione, sviluppo e stampa.</p>
+<h3>2.3 Pellicole speciali</h3>
+<p>Esistono pellicole <strong>bilanciate per luce artificiale</strong> (per esempio tungsteno), pellicole <strong>a infrarossi</strong>, che producono effetti particolari su vegetazione e cieli, e pellicole <strong>istantanee</strong>. La resa dipende dal tipo specifico e dalla luce utilizzata.</p>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="2-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="2-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Osserva un rullo 35 mm vero o in foto: individua fotogrammi e perforazioni e calcola quanti scatti ha un rullo da 36.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="2-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Per un giorno scatta “da rullo”: ISO fisso a 100, nessuna anteprima sul display, al massimo 24 scatti.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="2-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Elenca i tipi principali di pellicola e una caratteristica di ciascuno, senza guardare.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="2-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="2-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="2-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c3" data-n="3" data-nav>
+<h2>3. Dalla pellicola al digitale: analogie e differenze</h2>
+<div class="cmeta"><span class="chip" id="cm3"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<table class="resp">
+<thead><tr><th>Aspetto</th><th>Pellicola</th><th>Digitale</th></tr></thead>
+<tbody>
+<tr><td>Superficie sensibile</td><td>Emulsione fotosensibile</td><td>Sensore elettronico</td></tr>
+<tr><td>Registrazione</td><td>Reazione chimica e immagine latente</td><td>Cariche elettriche generate dalla luce</td></tr>
+<tr><td>Sviluppo</td><td>Trattamento chimico</td><td>Lettura, conversione e sviluppo digitale dei dati</td></tr>
+<tr><td>ISO</td><td>Scelto per il rullo</td><td>Impostato dalla fotocamera, anche a ogni scatto</td></tr>
+<tr><td>Aspetto della struttura</td><td>Grana</td><td>Rumore digitale</td></tr>
+<tr><td>Risultato iniziale</td><td>Negativo o diapositiva</td><td>Dati RAW o immagine già elaborata, per esempio JPEG</td></tr>
+</tbody></table>
+<div class="box tip"><span class="lab">L’analogia fondamentale</span><p>Pellicola e sensore si trovano entrambi dietro l’obiettivo e registrano la luce. Cambia ciò che succede dopo: reazione chimica nella pellicola, segnale elettrico e dati nel digitale.</p></div>
+<h3>Cosa succede nelle alte luci</h3>
+<p>Un negativo colore può sopportare una certa sovraesposizione e mantenere dettaglio nelle alte luci. Un sensore digitale, invece, quando raggiunge il limite massimo di carica in una zona, può perdere il dettaglio di quella zona in modo netto. Il RAW offre margine di recupero, ma non rende il sensore illimitato.</p>
+<figure class="fig"><svg viewBox="0 0 360 304" role="img" aria-label="Grafico concettuale: il sensore risponde in modo lineare e poi si satura di colpo, la pellicola ha una curva morbida">
+<path class="th" d="M40 250H340M40 250V28"/>
+<path d="M340 250l-7-4v8zM40 28l-4 7h8z" fill="var(--gray-bd)"/>
+<path class="ds th" d="M215 92V250"/>
+<path d="M40 250L215 92H335" fill="none" stroke="var(--accent)" stroke-width="4"/>
+<path d="M40 250C100 248 130 226 160 186S230 112 270 82S320 56 335 48" fill="none" stroke="var(--accent2)" stroke-width="4"/>
+<path d="M44 38h26" stroke="var(--accent)" stroke-width="4"/><text class="s" x="78" y="42">sensore: sale dritto, poi si “taglia”</text>
+<path d="M44 60h26" stroke="var(--accent2)" stroke-width="4"/><text class="s" x="78" y="64">pellicola: curva morbida</text>
+<text class="s c" x="215" y="268">saturazione</text>
+<text class="s c" x="190" y="292">più luce ricevuta →</text>
+<text class="s" transform="translate(22,200) rotate(-90)">segnale registrato →</text>
+</svg><figcaption>Schema concettuale (non misurato): oltre il limite il sensore non distingue più le differenze, mentre la pellicola le comprime gradualmente.</figcaption></figure>
+<h3>Grana e rumore non sono la stessa cosa</h3>
+<p>La grana deriva dalla struttura dell’emulsione; il rumore digitale nasce da fenomeni statistici ed elettronici durante la cattura e la lettura del segnale. Possono sembrare simili nella fotografia, ma hanno cause diverse.</p>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="3-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="3-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Fotografa una finestra luminosa con la stanza in ombra, prima sovraesposta e poi sottoesposta: osserva come reagiscono alte luci e ombre.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="3-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Scatta a ISO 6400 e guarda a zoom 100%: riconosci il rumore e spiega perché non è la grana della pellicola.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="3-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Con parole tue: che differenza c’è tra grana della pellicola e rumore digitale?</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="3-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="3-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="3-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c4" data-n="4" data-nav>
+<h2>4. Il sensore digitale: come funziona</h2>
+<div class="cmeta"><span class="chip" id="cm4"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<p>Il sensore è una superficie composta da milioni di piccole unità sensibili alla luce, chiamate <strong>fotositi</strong>. Ogni fotosito contiene un fotodiodo: quando i fotoni lo colpiscono, si genera una carica elettrica collegata alla quantità di luce raccolta.</p>
+<figure class="fig"><svg viewBox="0 0 396 262" role="img" aria-label="Sezione di un fotosito: microlente, filtro colore, fotodiodo e circuiti">
+<path class="lr" d="M125 4V34" style="marker-end:url(#arr2)"/><path class="lr" d="M180 4V26" style="marker-end:url(#arr2)"/><path class="lr" d="M235 4V34" style="marker-end:url(#arr2)"/>
+<path class="ft" d="M105 76Q180 8 255 76Z"/>
+<rect class="fg" x="105" y="78" width="150" height="22"/>
+<rect class="fa" x="105" y="100" width="150" height="72"/>
+<circle cx="135" cy="150" r="5" fill="var(--accent2)"/><circle cx="155" cy="156" r="5" fill="var(--accent2)"/><circle cx="178" cy="150" r="5" fill="var(--accent2)"/><circle cx="200" cy="157" r="5" fill="var(--accent2)"/><circle cx="222" cy="150" r="5" fill="var(--accent2)"/><circle cx="165" cy="138" r="5" fill="var(--accent2)"/><circle cx="195" cy="138" r="5" fill="var(--accent2)"/>
+<rect class="fx" x="105" y="172" width="150" height="30"/><text class="s c" x="180" y="192">circuiti di lettura</text>
+<text class="b" x="266" y="48">microlente</text><text class="s" x="266" y="64">concentra la luce</text>
+<text class="b" x="266" y="94">filtro colore</text>
+<text class="b" x="266" y="122">fotodiodo</text><text class="s" x="266" y="138">fotoni → cariche</text>
+<text class="s c" x="180" y="226">1 fotosito = microlente + filtro + fotodiodo</text>
+<text class="s c" x="180" y="244">Più luce arriva, più cariche si accumulano.</text>
+</svg><figcaption>Sezione schematica di un fotosito. I puntini arancioni sono le cariche elettriche generate dai fotoni.</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Digital_camera_image_sensor.jpg" alt="Sensore di immagine montato su una scheda elettronica di fotocamera" loading="lazy" onerror="imgFail(this)"><figcaption>Un sensore d’immagine reale, visto all’interno di una fotocamera digitale. <span class="cred">Foto: John Carney, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by/2.0/" target="_blank" rel="noopener">CC BY 2.0</a>. <a href="https://commons.wikimedia.org/wiki/File:Digital_camera_image_sensor.jpg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<p>Per registrare il colore, la maggior parte dei sensori usa filtri rossi, verdi e blu posti sopra i fotositi. Un singolo fotosito, quindi, normalmente non misura tutti i colori insieme.</p>
+<h3>4.1 Il filtro Bayer e il colore</h3>
+<figure class="fig"><svg viewBox="0 0 360 312" role="img" aria-label="Matrice Bayer: sei per sei fotositi con filtri rosso, verde e blu, due verdi per ogni rosso e blu">
+<defs><pattern id="bay8" x="60" y="10" width="80" height="80" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="#d9534f"/><rect x="40" width="40" height="40" fill="#4fa957"/><rect y="40" width="40" height="40" fill="#4fa957"/><rect x="40" y="40" width="40" height="40" fill="#4a8fd9"/></pattern>
+<pattern id="grid8" x="60" y="10" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="none" stroke="var(--card)" stroke-width="2"/></pattern></defs>
+<rect x="60" y="10" width="240" height="240" fill="url(#bay8)"/><rect x="60" y="10" width="240" height="240" fill="url(#grid8)"/>
+<text class="h c w" x="80" y="36">R</text><text class="h c w" x="120" y="36">G</text><text class="h c w" x="80" y="76">G</text><text class="h c w" x="120" y="76">B</text>
+<rect x="140" y="10" width="40" height="40" fill="none" stroke="var(--accent2)" stroke-width="5"/>
+<text class="c" x="180" y="274">Ogni cella (fotosito) registra un solo colore.</text>
+<text class="s c" x="180" y="294">Gli altri due vengono ricostruiti dai vicini.</text>
+</svg><figcaption>La matrice Bayer: due fotositi verdi, uno rosso e uno blu ogni gruppo di quattro. Il riquadro arancione evidenzia un fotosito che “vede” solo il rosso.</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://upload.wikimedia.org/wikipedia/commons/1/1c/Bayer_pattern_on_sensor_profile.svg" alt="Schema della matrice Bayer: filtri colore sopra i fotositi del sensore" loading="lazy" onerror="imgFail(this)"><figcaption>La matrice Bayer vista di profilo: i filtri colore sono sopra i fotositi, il processore ricostruisce i colori mancanti. <span class="cred">Schema: Cburnett, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>. <a href="https://commons.wikimedia.org/wiki/File:Bayer_pattern_on_sensor_profile.svg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<p>Il sistema più diffuso è la <strong>matrice Bayer</strong>: in ogni gruppo di quattro filtri ci sono normalmente due verdi, un rosso e un blu. Ogni fotosito registra soprattutto la componente del colore del proprio filtro. Il processore ricostruisce le altre componenti usando i dati dei fotositi vicini: questa operazione si chiama <strong>demosaicizzazione</strong> (<em>demosaicing</em>).</p>
+<p>Il verde è presente in quantità doppia perché contribuisce molto alla percezione della luminosità e del dettaglio. Il colore del file finale, quindi, non è semplicemente “letto” da ogni singolo fotosito: viene ricostruito ed elaborato.</p>
+
+<h3>4.2 Dal segnale al file: i sei passaggi</h3>
+<figure class="fig"><svg viewBox="0 0 360 396" role="img" aria-label="Sei passaggi dalla luce al file finale">
+<g>
+<rect class="fa" x="10" y="6" width="340" height="52" rx="12"/><circle class="fc" cx="38" cy="32" r="14"/><text class="b c" x="38" y="37">1</text><text class="h" x="64" y="29">Luce al sensore</text><text class="s" x="64" y="47">l’obiettivo proietta la scena</text>
+<path class="ar" d="M180 58V70"/>
+<rect class="fb" x="10" y="72" width="340" height="52" rx="12"/><circle class="fc" cx="38" cy="98" r="14"/><text class="b c" x="38" y="103">2</text><text class="h" x="64" y="95">Carica nei fotositi</text><text class="s" x="64" y="113">i fotoni generano cariche elettriche</text>
+<path class="ar" d="M180 124V136"/>
+<rect class="fg" x="10" y="138" width="340" height="52" rx="12"/><circle class="fc" cx="38" cy="164" r="14"/><text class="b c" x="38" y="169">3</text><text class="h" x="64" y="161">Lettura elettronica</text><text class="s" x="64" y="179">il segnale viene letto e amplificato (ISO)</text>
+<path class="ar" d="M180 190V202"/>
+<rect class="fv" x="10" y="204" width="340" height="52" rx="12"/><circle class="fc" cx="38" cy="230" r="14"/><text class="b c" x="38" y="235">4</text><text class="h" x="64" y="227">Conversione A/D</text><text class="s" x="64" y="245">il segnale diventa numeri</text>
+<path class="ar" d="M180 256V268"/>
+<rect class="fr" x="10" y="270" width="340" height="52" rx="12"/><circle class="fc" cx="38" cy="296" r="14"/><text class="b c" x="38" y="301">5</text><text class="h" x="64" y="293">Dati RAW</text><text class="s" x="64" y="311">si conservano le misure</text>
+<path class="ar" d="M180 322V334"/>
+<rect class="ft" x="10" y="336" width="340" height="52" rx="12"/><circle class="fc" cx="38" cy="362" r="14"/><text class="b c" x="38" y="367">6</text><text class="h" x="64" y="359">Sviluppo finale</text><text class="s" x="64" y="377">si ottiene un JPEG o un HEIF</text>
+</g></svg><figcaption>Il percorso semplificato: dal fenomeno fisico alla fotografia visualizzabile.</figcaption></figure>
+<ol>
+<li><strong>La luce raggiunge il sensore.</strong> L’obiettivo proietta sul sensore l’immagine formata dalla scena. Diaframma e tempo di scatto determinano quanta luce arriva a ciascuna zona.</li>
+<li><strong>I fotositi raccolgono la luce.</strong> I fotoni generano cariche elettriche nei fotodiodi. In modo semplificato: più luce arriva, più carica viene accumulata, fino al limite che il fotosito può contenere.</li>
+<li><strong>L’elettronica legge e amplifica il segnale.</strong> La carica viene convertita in un segnale elettrico. In questa fase interviene anche il guadagno analogico collegato all’impostazione ISO; non vengono creati nuovi fotoni, viene modificato il livello del segnale elettrico.</li>
+<li><strong>Il convertitore analogico-digitale (A/D) trasforma il segnale in numeri.</strong> Il sensore produce un segnale continuo; il convertitore lo misura e assegna un valore numerico. Il numero di bit stabilisce quanti livelli numerici sono disponibili per descrivere quel segnale.</li>
+<li><strong>La fotocamera salva i dati RAW oppure li elabora.</strong> Il RAW conserva i valori letti dai fotositi, le informazioni tecniche e spesso un’anteprima JPEG. Può includere correzioni tecniche e compressione, ma non contiene normalmente la fotografia RGB definitiva.</li>
+<li><strong>Il processore sviluppa l’immagine e crea il file finale.</strong> Quando si produce un JPEG o un HEIF, la fotocamera ricostruisce i colori, applica bilanciamento del bianco, profilo colore, contrasto, nitidezza e riduzione del rumore, poi comprime e salva l’immagine.</li>
+</ol>
+<div class="box tip"><span class="lab">In parole semplici</span><p>Il sensore raccoglie la luce e la trasforma in misure; il processore interpreta quelle misure e le trasforma in una fotografia pronta per essere vista.</p></div>
+
+<h3>4.3 RAW e JPEG: perché il RAW conserva più margine</h3>
+<figure class="fig"><svg viewBox="0 0 360 318" role="img" aria-label="Un'anteprima scura, i dati RAW registrati e il risultato dopo lo sviluppo">
+<rect class="fd" x="10" y="6" width="340" height="62" rx="12"/><text class="h c w" x="180" y="32">Anteprima scura</text><text class="s c w" x="180" y="52" style="fill:#b7c8d3">sullo schermo i dettagli si vedono poco</text>
+<path class="ar" d="M180 70V92"/><text class="s" x="192" y="86">il RAW contiene di più</text>
+<rect class="fa" x="10" y="94" width="340" height="62" rx="12"/><text class="h c" x="180" y="120">Dati RAW</text><text class="s c" x="180" y="140">misure registrate dal sensore, anche nelle ombre</text>
+<path class="ar" d="M180 158V180"/><text class="s" x="192" y="174">schiarisci ombre / esposizione</text>
+<rect class="fg" x="10" y="182" width="340" height="62" rx="12"/><text class="h c" x="180" y="208">Dopo lo sviluppo</text><text class="s c" x="180" y="228">alcuni dettagli emergono</text>
+<text class="s c" x="180" y="272">Funziona solo se il sensore li ha davvero registrati.</text>
+<text class="s c" x="180" y="290">Zona completamente bianca = dettaglio perso.</text>
+</svg><figcaption>Schema concettuale: un’anteprima può apparire scura, mentre il RAW conserva misure che il software può rendere visibili.</figcaption></figure>
+<p>Il <strong>RAW</strong> conserva i dati del sensore prima della maggior parte delle scelte estetiche definitive. RAW significa “grezzo” o “non elaborato”; non è un acronimo. Non è però un file totalmente privo di interventi: la fotocamera può applicare alcune correzioni tecniche, comprimerlo e inserirvi un’anteprima. Rispetto al JPEG, conserva comunque più dati originali e lascia più decisioni al programma di sviluppo. Per ottenere la fotografia finale va interpretato da un software, per esempio Lightroom, Capture One o il programma del produttore.</p>
+<table class="resp">
+<thead><tr><th>RAW</th><th>JPEG</th></tr></thead>
+<tbody>
+<tr><td>Conserva più dati originali del sensore e più possibilità di regolazione.</td><td>È già sviluppato dalla fotocamera o da un programma.</td></tr>
+<tr><td>Permette di modificare con più margine esposizione, bilanciamento del bianco, luci, ombre e colore.</td><td>Le regolazioni sono possibili, ma il margine è minore perché parte dell’elaborazione e della compressione è già stata applicata.</td></tr>
+<tr><td>Di solito occupa più spazio.</td><td>Di solito occupa meno spazio ed è subito condivisibile.</td></tr>
+<tr><td>Richiede un programma compatibile per essere sviluppato.</td><td>È visualizzabile praticamente ovunque.</td></tr>
+</tbody></table>
+<h3>Che cosa significa avere informazioni “nascoste”?</h3>
+<p>Immagina una fotografia che sullo schermo appare molto scura. Il programma sta mostrando una versione interpretata dei dati RAW; in alcune zone scure possono esserci ancora misure registrate dal sensore che non sono evidenti nella visualizzazione iniziale. Aumentando l’esposizione o le ombre in un programma RAW, queste informazioni possono diventare visibili.</p>
+<p>Lo stesso può succedere nelle zone molto chiare: una parte che nell’anteprima sembra bianca può conservare ancora qualche dettaglio nel RAW, che può essere recuperato abbassando le alte luci.</p>
+<div class="box warn"><span class="lab">Attenzione: il RAW non fa miracoli</span>
+<ul>
+<li>Se una zona è sottoesposta ma il sensore ha registrato un segnale distinguibile dal rumore, si può schiarirla. Più la si schiarisce, più può diventare evidente il rumore.</li>
+<li>Se una zona è sovraesposta ma non tutti i canali del sensore hanno raggiunto il limite, il programma può recuperare parte del dettaglio.</li>
+<li>Se il sensore ha raggiunto il limite massimo e ha registrato una zona completamente bianca, il dettaglio originale non è più presente: nessun RAW può ricrearlo fedelmente.</li>
+</ul></div>
+<div class="box ex"><span class="lab">Esempio pratico</span><p>Fotografi una persona davanti a una finestra luminosa. Nel JPEG il cielo può apparire bianco. Nel RAW potresti riuscire a recuperare le nuvole, se il sensore non le ha bruciate completamente. Se la luce ha saturato il sensore, le nuvole sono perse.</p></div>
+<p>Il RAW conserva quindi <strong>più possibilità di sviluppo</strong>, non una quantità infinita di informazioni. La qualità del recupero dipende da quanta luce è stata realmente registrata e dal rumore presente.</p>
+
+<h3>4.4 Bit del RAW: 12 bit e 14 bit</h3>
+<p>Il RAW contiene valori numerici per i fotositi. I bit indicano quanti livelli numerici possono essere usati per rappresentare la misura di luce di ciascun fotosito.</p>
+<table>
+<thead><tr><th>Profondità</th><th class="r">Valori numerici teorici per campione</th></tr></thead>
+<tbody><tr><td>8 bit</td><td class="r">256</td></tr><tr><td>12 bit</td><td class="r">4.096</td></tr><tr><td>14 bit</td><td class="r">16.384</td></tr></tbody></table>
+<p>Passare da 12 a 14 bit significa avere <strong>quattro volte più livelli numerici</strong> per descrivere il segnale. Questo permette di conservare gradazioni più fini e dà più margine durante alcune regolazioni.</p>
+<h3>Come sono distribuiti i livelli</h3>
+<p>Il sensore misura la luce in modo <em>lineare</em>: raddoppiare la luce raddoppia il numero registrato. Poiché ogni stop è un raddoppio, lo stop più chiaro occupa da solo <strong>metà</strong> di tutti i livelli, il successivo un quarto, e così via. Le ombre hanno pochi livelli a disposizione.</p>
+<figure class="fig"><svg viewBox="0 0 360 236" role="img" aria-label="Livelli disponibili per ogni stop in un RAW lineare a 14 bit: 8192, 4096, 2048, 1024, 512, 256">
+<text class="b" x="10" y="20">Livelli per ogni stop (RAW 14 bit, lineare)</text>
+<g>
+<text class="s" x="10" y="52">1° stop (luci)</text><rect x="104" y="36" width="240" height="22" rx="4" fill="var(--accent)"/><text class="b e w" x="338" y="52">8192</text>
+<text class="s" x="10" y="86">2° stop</text><rect x="104" y="70" width="120" height="22" rx="4" fill="var(--accent)"/><text class="b e w" x="218" y="86">4096</text>
+<text class="s" x="10" y="120">3° stop</text><rect x="104" y="104" width="60" height="22" rx="4" fill="var(--accent)"/><text class="b e w" x="158" y="120">2048</text>
+<text class="s" x="10" y="154">4° stop</text><rect x="104" y="138" width="30" height="22" rx="4" fill="var(--accent)"/><text class="b" x="142" y="154">1024</text>
+<text class="s" x="10" y="188">5° stop</text><rect x="104" y="172" width="15" height="22" rx="4" fill="var(--accent)"/><text class="b" x="127" y="188">512</text>
+<text class="s" x="10" y="222">6° stop (ombre)</text><rect x="104" y="206" width="7.5" height="22" rx="3" fill="var(--accent)"/><text class="b" x="119" y="222">256</text>
+</g></svg><figcaption>Valori indicativi (si ignora il livello di nero). Per questo si dice che conviene non sottoesporre: le ombre hanno pochi livelli e molto rumore.</figcaption></figure>
+<div class="box warn"><span class="lab">Bit non sono gamma dinamica</span><p>14 bit non significano automaticamente 14 stop di gamma dinamica. I bit indicano quanti gradini numerici sono disponibili; la gamma dinamica indica quanta differenza tra luci e ombre il sensore riesce a registrare. Sono concetti collegati, ma diversi.</p></div>
+<p>Nei RAW Bayer, il valore a 12 o 14 bit è riferito alla misura del singolo fotosito, non a un pixel RGB già completo. Il JPEG tradizionale è normalmente a 8 bit per canale, dopo che i colori sono stati ricostruiti e l’immagine è stata elaborata.</p>
+<p><strong>Esempi Sony:</strong></p>
+<ul>
+<li><strong>Sony α6600</strong>: registra file RAW Sony <strong>ARW</strong> compressi. Il RAW è normalmente a 14 bit nello scatto singolo con otturatore silenzioso disattivato; in alcune condizioni, tra cui raffica, BULB, riduzione del rumore sulle lunghe esposizioni e scatto silenzioso, la lettura è limitata a 12 bit.</li>
+<li><strong>Sony α7 III</strong> (modello standard, non α7R III): registra file <strong>ARW</strong> e permette di scegliere RAW compresso o non compresso. Il RAW è normalmente a 14 bit; con RAW compresso la raffica può scendere a 12 bit, mentre il RAW non compresso mantiene 14 bit in raffica nelle condizioni previste dal manuale. BULB e riduzione del rumore sulle lunghe esposizioni hanno limitazioni specifiche.</li>
+</ul>
+<p>Questi dettagli mostrano perché non basta leggere “RAW a 14 bit” nella scheda tecnica: la profondità effettiva può dipendere dalla modalità di scatto. Per i due modelli, fare riferimento alle rispettive guide Sony e alla tabella ufficiale delle limitazioni RAW.</p>
+
+<h3>4.5 I principali formati RAW</h3>
+<p>Il RAW non ha un’unica estensione universale: ogni produttore usa uno o più formati. I nomi cambiano, ma l’idea è la stessa: conservare i dati della ripresa per poterli sviluppare in seguito.</p>
+<table class="resp">
+<thead><tr><th>Produttore</th><th>Estensione più comune</th><th>Nota</th></tr></thead>
+<tbody>
+<tr><td>Sony</td><td><strong>.ARW</strong></td><td>Formato RAW delle fotocamere Alpha e di molti modelli Cyber-shot.</td></tr>
+<tr><td>Canon</td><td><strong>.CR3</strong> (prima .CR2)</td><td>Formato proprietario Canon.</td></tr>
+<tr><td>Nikon</td><td><strong>.NEF</strong></td><td>Nikon Electronic Format; alcune compatte usano anche .NRW.</td></tr>
+<tr><td>Fujifilm</td><td><strong>.RAF</strong></td><td>Contiene i dati RAW e quanto serve a interpretare la matrice colore, anche X-Trans.</td></tr>
+<tr><td>Panasonic</td><td><strong>.RW2</strong></td><td>Formato RAW usato da molte fotocamere Lumix.</td></tr>
+<tr><td>OM SYSTEM / Olympus</td><td><strong>.ORF</strong></td><td>Formato RAW della famiglia Olympus/OM SYSTEM.</td></tr>
+<tr><td>Pentax</td><td><strong>.PEF</strong> o <strong>.DNG</strong></td><td>La disponibilità dipende dal modello.</td></tr>
+<tr><td>Leica</td><td><strong>.DNG</strong> su diversi modelli</td><td>Altri formati secondo il modello.</td></tr>
+<tr><td>Sigma</td><td><strong>.X3F</strong> su modelli Foveon</td><td>Formato associato ai sensori Foveon.</td></tr>
+<tr><td>Adobe / vari produttori</td><td><strong>.DNG</strong></td><td>Digital Negative: formato RAW con specifiche pubbliche, pensato per compatibilità e conservazione a lungo termine.</td></tr>
+</tbody></table>
+<div class="box rem"><span class="lab">Un dettaglio importante</span><p>DNG non è un JPEG e non è un formato “di qualità superiore” per definizione. È un modo standardizzato di conservare dati RAW. Un file ARW, NEF o CR3 può essere convertito in DNG con un programma compatibile; la conversione non recupera informazioni che non erano presenti nel file originale.</p></div>
+<p>La compressione di un RAW può essere <strong>senza perdita</strong> oppure, in alcuni sistemi, comportare una certa perdita di dati. Non tutti i produttori e modelli offrono le stesse opzioni: “compresso” non significa sempre la stessa cosa.</p>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="4-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="4-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Imposta RAW+JPEG sulla A6600 e scatta 10 foto con luci e ombre forti; sottoesponi una di 2 stop.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="4-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Apri RAW e JPEG della foto sottoesposta e schiarisci entrambi: confronta quanto dettaglio emerge.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="4-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Descrivi a voce i passaggi dalla luce al file e spiega perché il RAW ha più margine del JPEG.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="4-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="4-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="4-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c5" data-n="5" data-nav>
+<h2>5. La gamma dinamica: quante luci e ombre può registrare il sensore</h2>
+<div class="cmeta"><span class="chip" id="cm5"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<p>La <strong>gamma dinamica</strong> è la distanza tra il dettaglio più luminoso e quello più scuro che il sensore riesce a registrare in modo utile nella stessa fotografia.</p>
+<p>Pensa a una scena con una finestra molto luminosa e una stanza scura. La fotocamera deve riuscire a registrare sia i dettagli fuori dalla finestra, sia quelli nelle ombre della stanza. Se la differenza di luminosità è troppo grande, una parte può diventare bianca senza dettaglio oppure nera senza dettaglio.</p>
+<figure class="fig"><svg viewBox="0 0 360 214" role="img" aria-label="Barra dalle ombre alle luci con la gamma dinamica utile tra il limite del rumore e la saturazione">
+<defs><linearGradient id="drg" x1="0" x2="1"><stop offset="0" stop-color="#16263a"/><stop offset="1" stop-color="#f4b24e"/></linearGradient></defs>
+<text class="b c" x="180" y="20">Intervallo di luminosità registrabile</text>
+<rect x="20" y="34" width="320" height="46" rx="8" fill="url(#drg)"/>
+<text class="s w" x="30" y="62" style="fill:#e6eef3">ombre</text><text class="s e" x="330" y="62" style="fill:#3b2b14">luci</text>
+<path d="M80 34V84M280 34V84" stroke="var(--ink)" stroke-width="2" class="ds"/>
+<path class="ln" d="M80 98V108H280V98"/>
+<text class="b c" x="180" y="130" style="fill:var(--accent)">gamma dinamica utile</text>
+<text class="s" x="20" y="160">◄ sotto il limite: dettaglio perso nel rumore</text>
+<text class="s e" x="340" y="182">oltre il limite: alte luci saturate ►</text>
+</svg><figcaption>La gamma dinamica utile sta tra le ombre distinguibili dal rumore e le alte luci che non hanno ancora saturato il sensore.</figcaption></figure>
+<p>La gamma dinamica si misura in <strong>stop</strong> (o EV). Ogni stop rappresenta un raddoppio o un dimezzamento della luce:</p>
+<table>
+<thead><tr><th>Differenza</th><th class="r">Rapporto di luminosità</th></tr></thead>
+<tbody><tr><td>1 stop</td><td class="r">2 volte</td></tr><tr><td>2 stop</td><td class="r">4 volte</td></tr><tr><td>3 stop</td><td class="r">8 volte</td></tr><tr><td>5 stop</td><td class="r">32 volte</td></tr><tr><td>10 stop</td><td class="r">1.024 volte</td></tr></tbody></table>
+<p>Un sensore con una gamma dinamica più ampia riesce a conservare una maggiore quantità di dettagli contemporaneamente nelle zone chiare e in quelle scure.</p>
+<h3>5.1 Da cosa dipende</h3>
+<p>Il sensore ha due limiti principali:</p>
+<ul>
+<li><strong>Limite superiore</strong>: un fotosito può accumulare solo una quantità massima di carica. Quando la supera, il segnale satura e le alte luci perdono dettaglio.</li>
+<li><strong>Limite inferiore</strong>: nelle zone molto scure il segnale può essere così debole da confondersi con il rumore elettronico e termico. A quel punto il dettaglio non è più distinguibile in modo affidabile.</li>
+</ul>
+<p>La gamma dinamica utile è la distanza tra questi due limiti. Non dipende solo dai megapixel: contano dimensioni del sensore, capacità dei fotositi, rumore di lettura ed elettronica. Il concetto ricorda la latitudine di posa della pellicola, ma il comportamento è diverso: la pellicola ha una propria curva di risposta chimica, mentre il sensore può saturare in modo netto.</p>
+<h3>5.2 Che cosa c’entrano gli ISO</h3>
+<p>Gli ISO digitali non fanno arrivare più fotoni al sensore. La quantità di luce raccolta dipende soprattutto da <strong>diaframma, tempo di scatto e illuminazione della scena</strong>. Gli ISO regolano il modo in cui il segnale viene amplificato e trasformato nell’immagine.</p>
+<ul>
+<li>A <strong>ISO base</strong> il sensore offre normalmente il margine più ampio per conservare le alte luci e quindi la gamma dinamica complessiva più elevata.</li>
+<li>Aumentando gli ISO, il segnale viene amplificato. L’immagine appare più luminosa, ma le alte luci possono raggiungere prima il limite di registrazione.</li>
+<li>Nelle ombre, un’amplificazione analogica adeguata può rendere il segnale più distinguibile dal rumore introdotto nelle fasi successive della lettura. Per questo il rapporto tra ISO e rumore non è sempre una semplice linea retta.</li>
+</ul>
+<div class="box ex"><span class="lab">Esempio</span><p>Con diaframma e tempo invariati, passare da ISO 100 a ISO 800 rende l’immagine più luminosa, ma non raccoglie più luce. Le zone chiare possono saturare prima. Se invece aumenti gli ISO perché accorci il tempo di scatto, il sensore riceve meno luce e nelle ombre può esserci meno informazione utile.</p></div>
+<p>Il valore ISO, da solo, non dice tutta la qualità dell’immagine: bisogna considerare quanta luce è arrivata davvero al sensore e come l’elettronica ha letto il segnale.</p>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="5-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="5-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Fotografa una scena con cielo e ombre a ISO 100 e a ISO 3200: dove si perdono prima i dettagli?</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="5-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Usa la compensazione EV (−1, 0, +1) su una scena contrastata e controlla l’istogramma: dove tocca il bordo destro?</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="5-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Che cosa sono alte luci bruciate e ombre nere, e come cambia la gamma dinamica con gli ISO?</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="5-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="5-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="5-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c6" data-n="6" data-nav>
+<h2>6. Il doppio guadagno di conversione (Dual Conversion Gain)</h2>
+<div class="cmeta"><span class="chip" id="cm6"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<p>Alcuni sensori moderni possono leggere il segnale dei fotositi usando <strong>due livelli di guadagno di conversione</strong>. In inglese si parla di <em>Dual Conversion Gain</em> (DCG). È una soluzione elettronica progettata per gestire meglio situazioni luminose diverse.</p>
+<figure class="fig"><svg viewBox="0 0 360 336" role="img" aria-label="Due secchi: guadagno basso con molto spazio per le cariche, guadagno alto con segnale più forte; sotto, curva del rumore con un salto all'ISO di commutazione">
+<g transform="translate(6,6)"><rect class="fb" width="168" height="206" rx="12"/><text class="b" x="10" y="22">LCG · guadagno basso</text>
+<path class="th" style="stroke:var(--ink);stroke-width:2.5" d="M22 90V160H102V90"/>
+<circle cx="40" cy="148" r="6" fill="var(--accent2)"/><circle cx="62" cy="148" r="6" fill="var(--accent2)"/><circle cx="84" cy="148" r="6" fill="var(--accent2)"/><circle cx="51" cy="132" r="6" fill="var(--accent2)"/><circle cx="73" cy="132" r="6" fill="var(--accent2)"/><circle cx="62" cy="116" r="6" fill="var(--accent2)"/>
+<rect x="132" y="136" width="18" height="24" fill="var(--accent)"/><path class="th" style="stroke:var(--ink)" d="M128 160H154"/>
+<text class="s c" x="62" y="182">secchio grande</text><text class="s c" x="141" y="182">uscita</text>
+<text class="s c" x="84" y="198">più margine di carica</text></g>
+<g transform="translate(186,6)"><rect class="fg" width="168" height="206" rx="12"/><text class="b" x="10" y="22">HCG · guadagno alto</text>
+<path class="th" style="stroke:var(--ink);stroke-width:2.5" d="M32 90V160H72V90"/>
+<circle cx="42" cy="148" r="6" fill="var(--accent2)"/><circle cx="62" cy="148" r="6" fill="var(--accent2)"/><circle cx="42" cy="132" r="6" fill="var(--accent2)"/><circle cx="62" cy="132" r="6" fill="var(--accent2)"/><circle cx="42" cy="116" r="6" fill="var(--accent2)"/><circle cx="62" cy="116" r="6" fill="var(--accent2)"/>
+<rect x="132" y="100" width="18" height="60" fill="var(--accent)"/><path class="th" style="stroke:var(--ink)" d="M128 160H154"/>
+<text class="s c" x="52" y="182">secchio piccolo</text><text class="s c" x="141" y="182">uscita</text>
+<text class="s c" x="84" y="198">segnale debole più leggibile</text></g>
+<text class="b" x="10" y="238">Rumore nelle ombre al variare degli ISO</text>
+<path class="th" d="M30 312H340M30 312V246"/>
+<path d="M30 256L190 280L190 296L340 308" fill="none" stroke="var(--accent2)" stroke-width="3.5" stroke-linejoin="round"/>
+<path class="th ds" d="M190 250V312"/>
+<text class="s c" x="190" y="330">ISO di commutazione (dipende dal modello)</text>
+</svg><figcaption>Schema concettuale: stesse cariche, uscita diversa. Il “salto” nella curva è il punto in cui il circuito cambia modalità. Non è lo schema elettrico di un modello specifico.</figcaption></figure>
+<p>A livello circuitale il sensore può collegare o escludere un piccolo condensatore, modificando il rapporto tra carica raccolta e tensione prodotta. Per capirne l’effetto, immagina il fotosito come un piccolo contenitore che raccoglie cariche elettriche:</p>
+<ol>
+<li><strong>Guadagno basso (Low Conversion Gain – LCG).</strong> Il circuito privilegia la capacità di accumulare una quantità maggiore di carica. È utile con molta luce perché lascia più margine prima che le alte luci saturino.</li>
+<li><strong>Passaggio al guadagno alto.</strong> A un valore ISO stabilito dal progetto del sensore, la fotocamera cambia modalità di lettura. Non è un cambio di obiettivo né un secondo sensore: cambia il modo in cui il segnale viene convertito.</li>
+<li><strong>Guadagno alto (High Conversion Gain – HCG).</strong> Una stessa carica produce un segnale elettrico più alto. Il segnale debole risulta meno penalizzato dal rumore aggiunto nelle fasi successive della lettura; le ombre possono quindi risultare più pulite.</li>
+<li><strong>Il compromesso.</strong> La modalità ad alto guadagno ha normalmente meno margine per contenere cariche molto elevate. Migliora la lettura dei segnali deboli, ma non conserva contemporaneamente tutto il margine sulle alte luci della modalità a basso guadagno.</li>
+</ol>
+<p>Il passaggio può creare un piccolo <strong>salto nella curva del rumore o della gamma dinamica</strong> quando si aumenta l’ISO. Non significa che la fotocamera diventi improvvisamente più sensibile alla luce: significa che il circuito cambia modalità per leggere meglio il segnale.</p>
+<h3>6.1 Esempio: Sony α7 III e Sony α6600</h3>
+<table class="resp">
+<thead><tr><th>Fotocamera</th><th>Che cosa sappiamo del comportamento</th></tr></thead>
+<tbody>
+<tr><td>Sony α7 III</td><td>Le misurazioni indipendenti dei file RAW individuano un passaggio al secondo livello di guadagno intorno a <strong>ISO 640</strong>. Da quel punto le ombre possono essere lette con meno rumore rispetto a quanto ci si aspetterebbe da una semplice amplificazione progressiva. Il produttore non presenta questa caratteristica come una voce selezionabile nel menu: è una caratteristica elettronica del sensore.</td></tr>
+<tr><td>Sony α6600</td><td>Sony conferma un sensore APS-C CMOS da 24,2 MP, ma non dichiara un ISO di commutazione del doppio guadagno. Senza un dato verificabile è meglio <strong>non indicare un secondo ISO base preciso</strong> per questa fotocamera.</td></tr>
+</tbody></table>
+<div class="box rem"><span class="lab">Da ricordare</span><p>Non si deve copiare il valore ISO 640 della α7 III su un’altra fotocamera Sony, né su altri marchi: la soglia dipende dal modello e dal sensore. Inoltre <strong>Dual Native ISO</strong> (usata da alcuni produttori, per esempio Panasonic in determinati modelli) è correlata all’idea di due livelli di sensibilità ottimale, ma non garantisce che il circuito sia identico al DCG.</p></div>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="6-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="6-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Scatta in RAW la stessa scena scura a ISO 100, 400, 800, 1600 e 3200 e osserva dove cambia il comportamento del rumore.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="6-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Rileggi il paragrafo 6.1, annota il punto di cambio di guadagno indicato per la α6600 e verificalo sulle tue foto.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="6-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Spiega con un’analogia che cos’è il doppio guadagno di conversione e perché è una soluzione elettronica.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="6-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="6-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="6-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c7" data-n="7" data-nav>
+<h2>7. Il rumore digitale: da dove arriva</h2>
+<div class="cmeta"><span class="chip" id="cm7"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<p>Il <strong>rumore digitale</strong> è una variazione indesiderata dei valori registrati dal sensore. Può apparire come puntini colorati, granulosità, righe o macchie, soprattutto nelle ombre e nelle fotografie scattate con poca luce.</p>
+<figure class="fig"><svg viewBox="0 0 360 322" role="img" aria-label="Tre tipi di rumore: fotonico, di lettura, termico">
+<g transform="translate(10,8)"><rect class="fd" width="130" height="92"/><g data-noise="shot" data-w="130" data-h="92"></g></g>
+<text class="b" x="154" y="34">Rumore fotonico</text><text class="s" x="154" y="54">la luce arriva a pacchetti</text><text class="s" x="154" y="70">irregolari: è un limite</text><text class="s" x="154" y="86">naturale, non un difetto</text>
+<g transform="translate(10,114)"><rect class="fd" width="130" height="92"/><g data-noise="read" data-w="130" data-h="92"></g></g>
+<text class="b" x="154" y="140">Rumore di lettura</text><text class="s" x="154" y="160">disturbo dell’elettronica</text><text class="s" x="154" y="176">che legge il segnale:</text><text class="s" x="154" y="192">pesa nelle ombre</text>
+<g transform="translate(10,220)"><rect class="fd" width="130" height="92"/><g data-noise="heat" data-w="130" data-h="92"></g></g>
+<text class="b" x="154" y="246">Rumore termico</text><text class="s" x="154" y="266">il calore genera cariche</text><text class="s" x="154" y="282">anche al buio: cresce con</text><text class="s" x="154" y="298">temperatura e durata</text>
+</svg><figcaption>Rappresentazione illustrativa dei tre contributi principali (i puntini sono generati a caso, solo a scopo didattico).</figcaption></figure>
+<p>Non esiste una sola causa. Per capire il fenomeno è utile distinguere tre contributi principali:</p>
+<ol>
+<li><strong>Rumore fotonico (<em>shot noise</em>).</strong> La luce arriva al sensore in quantità non perfettamente regolare: anche fotografando una superficie uniforme, il numero di fotoni raccolti varia casualmente da un fotosito all’altro. È un limite naturale della luce, non un difetto della fotocamera. Per ridurne l’effetto bisogna raccogliere più luce: aprire il diaframma, usare un tempo più lungo se il soggetto è fermo, aggiungere luce o usare un sistema di acquisizione più efficiente.</li>
+<li><strong>Rumore di lettura (<em>read noise</em>).</strong> È introdotto dall’elettronica che legge e converte le cariche elettriche. Si nota soprattutto quando il segnale è debole, per esempio nelle ombre. L’architettura del sensore e il guadagno elettronico possono ridurne l’impatto.</li>
+<li><strong>Rumore termico (<em>dark current</em>).</strong> Il calore può generare cariche elettriche anche quando non arrivano fotoni. Questo contributo cresce con la temperatura del sensore e con la durata dell’esposizione. Può produrre puntini molto luminosi, detti spesso <em>hot pixel</em>, e una maggiore granulosità nelle lunghe esposizioni.</li>
+</ol>
+<p>Esistono anche differenze fisse tra fotositi e circuiti di lettura, che possono generare pattern o righe (<em>fixed pattern noise</em> e <em>banding</em>).</p>
+<h3>7.1 ISO, guadagno e calore: non sono la stessa cosa</h3>
+<p>Aumentare gli ISO rende più visibili il segnale e il rumore già presenti. L’amplificazione può anche ridurre l’importanza del rumore introdotto dopo il punto in cui il segnale viene amplificato. Ma gli ISO, da soli, <strong>non generano luce e non sono la causa principale del riscaldamento del sensore</strong>.</p>
+<p>Il sensore può scaldarsi durante l’uso prolungato della fotocamera, per esempio con Live View, video, raffiche o lunghe esposizioni, e in un ambiente caldo. L’aumento di temperatura favorisce la generazione di cariche termiche, che si sommano a quelle prodotte dalla luce.</p>
+<div class="box ex"><span class="lab">Esempio</span><p>Una foto notturna con un’esposizione di 30 secondi può mostrare puntini colorati o luminosi anche in zone quasi nere. La durata dell’esposizione e la temperatura permettono alle cariche termiche di accumularsi. La riduzione rumore per lunghe esposizioni, disponibile su molte fotocamere, può scattare una seconda esposizione al buio per individuare e sottrarre parte di questo segnale; in compenso, il tempo di attesa può diventare quasi doppio.</p></div>
+<h3>7.2 Rumore digitale e grana della pellicola a confronto</h3>
+<table class="resp">
+<thead><tr><th>Pellicola</th><th>Sensore digitale</th></tr></thead>
+<tbody>
+<tr><td>La grana deriva dalla struttura dei cristalli e dei coloranti nell’emulsione.</td><td>Il rumore deriva da fluttuazioni della luce e dai circuiti elettronici/termici.</td></tr>
+<tr><td>In generale, pellicole più sensibili tendono ad avere grana più evidente.</td><td>A ISO più alti il rumore tende a diventare più visibile, ma il risultato dipende anche da sensore, guadagno ed esposizione.</td></tr>
+<tr><td>La grana è parte della struttura fisica dell’immagine.</td><td>Il rumore è una variazione indesiderata del segnale e può essere ridotto in elaborazione, con possibile perdita di dettaglio.</td></tr>
+</tbody></table>
+<p><strong>Analogia utile:</strong> grana e rumore possono entrambi rendere meno uniforme una superficie liscia, come un cielo. Ma non sono la stessa cosa e non si comportano nello stesso modo.</p>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="7-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="7-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Fai tre scatti: ISO 100 di giorno, ISO 6400 al buio e ISO 100 con tempo lungo. Confronta i tipi di rumore a 100%.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="7-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Schiarisci una foto sottoesposta a ISO 100 e una esposta bene a ISO 1600: quale risulta più pulita?</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="7-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Elenca le tre origini principali del rumore con un esempio per ciascuna.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="7-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="7-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="7-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c8" data-n="8" data-nav>
+<h2>8. Altre tecnologie e architetture dei sensori</h2>
+<div class="cmeta"><span class="chip" id="cm8"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<p>Le sigle che descrivono i sensori si riferiscono ad aspetti differenti. Non sono categorie che si escludono a vicenda: un sensore può essere, per esempio, <strong>CMOS, BSI, stacked e con matrice Bayer</strong> contemporaneamente.</p>
+<h3>8.1 CCD e CMOS: come viene letto il segnale</h3>
+<figure class="fig"><svg viewBox="0 0 360 232" role="img" aria-label="CCD: le cariche vengono spostate fino a un'unica uscita. CMOS: ogni fotosito ha il suo amplificatore e la lettura è parallela">
+<g transform="translate(6,4)"><rect class="fx" width="168" height="224" rx="12"/><text class="h c" x="84" y="24">CCD</text>
+<g class="fc"><rect x="28" y="40" width="28" height="28"/><rect x="56" y="40" width="28" height="28"/><rect x="84" y="40" width="28" height="28"/><rect x="112" y="40" width="28" height="28"/><rect x="28" y="68" width="28" height="28"/><rect x="56" y="68" width="28" height="28"/><rect x="84" y="68" width="28" height="28"/><rect x="112" y="68" width="28" height="28"/><rect x="28" y="96" width="28" height="28"/><rect x="56" y="96" width="28" height="28"/><rect x="84" y="96" width="28" height="28"/><rect x="112" y="96" width="28" height="28"/><rect x="28" y="124" width="28" height="28"/><rect x="56" y="124" width="28" height="28"/><rect x="84" y="124" width="28" height="28"/><rect x="112" y="124" width="28" height="28"/></g>
+<path class="ar" d="M42 48V148M70 48V148M98 48V148M126 48V148" style="stroke-width:2"/>
+<path class="ar2" d="M34 166H146"/><text class="s c" x="84" y="190">un’unica uscita</text><text class="s c" x="84" y="208">le cariche “scorrono”</text></g>
+<g transform="translate(186,4)"><rect class="fx" width="168" height="224" rx="12"/><text class="h c" x="84" y="24">CMOS</text>
+<g class="fc"><rect x="28" y="40" width="28" height="28"/><rect x="56" y="40" width="28" height="28"/><rect x="84" y="40" width="28" height="28"/><rect x="112" y="40" width="28" height="28"/><rect x="28" y="68" width="28" height="28"/><rect x="56" y="68" width="28" height="28"/><rect x="84" y="68" width="28" height="28"/><rect x="112" y="68" width="28" height="28"/><rect x="28" y="96" width="28" height="28"/><rect x="56" y="96" width="28" height="28"/><rect x="84" y="96" width="28" height="28"/><rect x="112" y="96" width="28" height="28"/><rect x="28" y="124" width="28" height="28"/><rect x="56" y="124" width="28" height="28"/><rect x="84" y="124" width="28" height="28"/><rect x="112" y="124" width="28" height="28"/></g>
+<g fill="var(--accent2)"><circle cx="42" cy="54" r="4"/><circle cx="70" cy="54" r="4"/><circle cx="98" cy="54" r="4"/><circle cx="126" cy="54" r="4"/><circle cx="42" cy="82" r="4"/><circle cx="70" cy="82" r="4"/><circle cx="98" cy="82" r="4"/><circle cx="126" cy="82" r="4"/><circle cx="42" cy="110" r="4"/><circle cx="70" cy="110" r="4"/><circle cx="98" cy="110" r="4"/><circle cx="126" cy="110" r="4"/><circle cx="42" cy="138" r="4"/><circle cx="70" cy="138" r="4"/><circle cx="98" cy="138" r="4"/><circle cx="126" cy="138" r="4"/></g>
+<path class="ln" d="M42 152V164M70 152V164M98 152V164M126 152V164" style="stroke-width:2"/><rect class="fd" x="28" y="164" width="112" height="8"/>
+<text class="s c" x="84" y="190">amplificatore in ogni fotosito</text><text class="s c" x="84" y="208">lettura per colonne, in parallelo</text></g>
+</svg><figcaption>Nel CCD le cariche vengono trasportate fino a un’uscita comune; nel CMOS l’elettronica di lettura è vicino a ogni fotosito.</figcaption></figure>
+<ul>
+<li><strong>CCD</strong>: le cariche vengono trasferite attraverso il sensore verso un circuito di lettura comune. È una tecnologia importante nella storia della fotografia digitale, ma oggi è poco usata nelle fotocamere di consumo.</li>
+<li><strong>CMOS</strong>: integra l’elettronica di lettura vicino ai fotositi. Consente letture rapide, consumi contenuti e circuiti integrati sul chip. È la tecnologia dominante nelle fotocamere e negli smartphone moderni.</li>
+</ul>
+<p>I primi CMOS potevano essere più rumorosi dei CCD, ma non è corretto dire che i CMOS moderni siano in generale più rumorosi: nel tempo sono migliorati moltissimo.</p>
+<h3>8.2 FSI e BSI: da quale lato arriva la luce</h3>
+<figure class="fig"><svg viewBox="0 0 360 252" role="img" aria-label="FSI: la luce incontra i collegamenti metallici prima del fotodiodo. BSI: la luce arriva direttamente al fotodiodo">
+<text class="h c" x="90" y="18">FSI · frontale</text><text class="h c" x="270" y="18">BSI · posteriore</text>
+<g transform="translate(40,0)">
+<path class="lr" d="M10 26V76M40 26V104M70 26V76" style="marker-end:url(#arr2)"/>
+<path class="ft" d="M0 84Q25 62 50 84"/><path class="ft" d="M50 84Q75 62 100 84"/>
+<rect class="fg" x="0" y="84" width="100" height="12"/>
+<rect class="fx" x="0" y="96" width="100" height="40"/><rect class="fk" x="2" y="98" width="16" height="20"/><rect class="fk" x="62" y="98" width="16" height="20"/>
+<rect class="fa" x="0" y="136" width="100" height="30"/></g>
+<g transform="translate(220,0)">
+<path class="lr" d="M10 26V122M40 26V122M70 26V122" style="marker-end:url(#arr2)"/>
+<path class="ft" d="M0 84Q25 62 50 84"/><path class="ft" d="M50 84Q75 62 100 84"/>
+<rect class="fg" x="0" y="84" width="100" height="12"/>
+<rect class="fa" x="0" y="96" width="100" height="30"/>
+<rect class="fx" x="0" y="126" width="100" height="40"/><rect class="fk" x="2" y="128" width="16" height="20"/><rect class="fk" x="62" y="128" width="16" height="20"/></g>
+<text class="s c" x="90" y="188">i collegamenti fanno ombra</text><text class="s c" x="270" y="188">la luce arriva più libera</text>
+<rect class="ft" x="20" y="212" width="12" height="12"/><text class="s" x="38" y="223">microlente</text>
+<rect class="fg" x="120" y="212" width="12" height="12"/><text class="s" x="138" y="223">filtro</text>
+<rect class="fa" x="188" y="212" width="12" height="12"/><text class="s" x="206" y="223">fotodiodo</text>
+<rect class="fx" x="272" y="212" width="12" height="12"/><text class="s" x="290" y="223">collegamenti</text>
+</svg><figcaption>Schema semplificato: nel BSI la struttura è rovesciata e la luce incontra meno ostacoli prima di raggiungere i fotodiodi.</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Comparison_backside_illumination.svg?width=900" alt="Confronto tra sensore a illuminazione frontale e posteriore" loading="lazy" onerror="imgFail(this)"><figcaption>Confronto tra illuminazione frontale (FSI) e posteriore (BSI). <span class="cred">Fonte: Wikimedia Commons (autore e licenza sulla pagina del file). <a href="https://commons.wikimedia.org/wiki/File:Comparison_backside_illumination.svg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<ul>
+<li><strong>FSI – Front-Side Illuminated</strong>: la luce attraversa gli strati frontali e può incontrare collegamenti metallici che ostacolano in parte il suo percorso verso il fotodiodo.</li>
+<li><strong>BSI – Back-Side Illuminated</strong>: la struttura è rovesciata, così la luce raggiunge il fotodiodo dal lato opposto rispetto a molti collegamenti elettronici. Questo migliora l’efficienza con cui il sensore raccoglie la luce, soprattutto quando i fotositi sono piccoli.</li>
+</ul>
+<p>Il BSI <strong>non rende il sensore più grande</strong> e non garantisce da solo una fotografia migliore. È una soluzione costruttiva che aiuta a raccogliere la luce. La Sony α7 III, per esempio, usa un sensore full frame BSI; la α6600 usa un sensore APS-C CMOS da 24,2 MP.</p>
+<h3>8.3 Sensori stacked</h3>
+<figure class="fig"><svg viewBox="0 0 360 206" role="img" aria-label="Sensore tradizionale con pixel e circuiti sullo stesso piano, sensore stacked con i circuiti sotto i pixel">
+<g transform="translate(6,4)"><rect class="fx" width="168" height="198" rx="12"/><text class="b c" x="84" y="22">Tradizionale</text>
+<rect class="fx" x="22" y="40" width="124" height="86" style="fill:var(--gray-bg)"/><rect class="fg" x="34" y="50" width="100" height="48"/><text class="b c" x="84" y="79">pixel</text><text class="s c" x="84" y="115">circuiti attorno</text>
+<text class="s c" x="84" y="156">pixel e circuiti</text><text class="s c" x="84" y="172">sullo stesso piano</text></g>
+<g transform="translate(186,4)"><rect class="fx" width="168" height="198" rx="12"/><text class="b c" x="84" y="22">Stacked</text>
+<rect class="fg" x="22" y="40" width="124" height="38"/><text class="b c" x="84" y="64">pixel</text>
+<path class="ln" d="M50 78V92M84 78V92M118 78V92" style="stroke-width:2.5"/>
+<rect class="fv" x="22" y="92" width="124" height="38"/><text class="b c" x="84" y="116">circuiti / memoria</text>
+<text class="s c" x="84" y="156">strati sovrapposti:</text><text class="s c" x="84" y="172">lettura più veloce</text></g>
+</svg><figcaption>Sensore stacked: la parte fotosensibile e i circuiti sono su livelli diversi (schema semplificato).</figcaption></figure>
+<p>Un sensore <strong>stacked</strong> (<em>impilato</em>) dispone su più livelli la parte fotosensibile e i circuiti di lettura/elaborazione. Questa architettura può aumentare molto la velocità di lettura, utile per raffiche, video e riduzione delle deformazioni da rolling shutter.</p>
+<div class="box rem"><span class="lab">BSI e stacked non sono sinonimi</span><p>BSI descrive il percorso della luce; stacked descrive il modo in cui sono disposti gli strati del chip. Un sensore può essere sia BSI sia stacked.</p></div>
+<h3>8.4 Rolling shutter e global shutter</h3>
+<figure class="fig"><svg viewBox="0 0 360 214" role="img" aria-label="Con il global shutter un'asta in movimento resta dritta, con il rolling shutter appare inclinata">
+<g transform="translate(6,4)"><rect class="fx" width="168" height="206" rx="12"/><text class="b c" x="84" y="22">Global shutter</text>
+<rect class="fc" x="20" y="38" width="128" height="106"/><rect x="72" y="46" width="20" height="90" fill="var(--accent)"/>
+<text class="s c" x="84" y="168">asta dritta</text><text class="s c" x="84" y="186">tutto lo stesso istante</text></g>
+<g transform="translate(186,4)"><rect class="fx" width="168" height="206" rx="12"/><text class="b c" x="84" y="22">Rolling shutter</text>
+<rect class="fc" x="20" y="38" width="128" height="106"/><polygon points="68,46 88,46 108,136 88,136" fill="var(--accent)"/>
+<path class="th" d="M20 60H148M20 74H148M20 88H148M20 102H148M20 116H148M20 130H148" style="opacity:.55"/>
+<text class="s c" x="84" y="168">asta inclinata</text><text class="s c" x="84" y="186">lettura riga per riga</text></g>
+</svg><figcaption>L’asta si muove verso destra durante la lettura: ogni riga viene letta un istante dopo la precedente.</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Propellor_with_rolling-shutter_artifact.jpg?width=900" alt="Elica fotografata con effetto rolling shutter: le pale appaiono curve" loading="lazy" onerror="imgFail(this)"><figcaption>Un esempio reale di rolling shutter: le pale dell’elica appaiono piegate. <span class="cred">Fonte: Wikimedia Commons (autore e licenza sulla pagina del file). <a href="https://commons.wikimedia.org/wiki/File:Propellor_with_rolling-shutter_artifact.jpg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<ul>
+<li><strong>Rolling shutter</strong>: il sensore legge l’immagine riga dopo riga. Se durante la lettura il soggetto o la fotocamera si muovono molto, alcune forme possono apparire inclinate o deformate. Un esempio classico è un’elica che sembra piegata. L’effetto è tipico dell’otturatore elettronico e dei video; con l’otturatore meccanico è di norma molto ridotto.</li>
+<li><strong>Global shutter</strong>: registra l’esposizione di tutti i fotositi nello stesso intervallo temporale, evitando questo tipo di deformazione dovuta alla lettura progressiva.</li>
+</ul>
+<p>Il global shutter è utile soprattutto con soggetti molto rapidi e in video. Non è sinonimo di maggiore qualità generale: è un diverso metodo di acquisizione.</p>
+<h3>8.5 Altre disposizioni dei filtri colore</h3>
+<figure class="fig"><svg viewBox="0 0 360 236" role="img" aria-label="Confronto tra matrice Bayer e Quad Bayer">
+<defs>
+<pattern id="bay2" x="18" y="36" width="36" height="36" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="#d9534f"/><rect x="18" width="18" height="18" fill="#4fa957"/><rect y="18" width="18" height="18" fill="#4fa957"/><rect x="18" y="18" width="18" height="18" fill="#4a8fd9"/></pattern>
+<pattern id="qb" x="198" y="36" width="72" height="72" patternUnits="userSpaceOnUse"><rect width="36" height="36" fill="#d9534f"/><rect x="36" width="36" height="36" fill="#4fa957"/><rect y="36" width="36" height="36" fill="#4fa957"/><rect x="36" y="36" width="36" height="36" fill="#4a8fd9"/></pattern>
+<pattern id="gl1" x="18" y="36" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="none" stroke="var(--card)" stroke-width="1.5"/></pattern>
+<pattern id="gl2" x="198" y="36" width="18" height="18" patternUnits="userSpaceOnUse"><rect width="18" height="18" fill="none" stroke="var(--card)" stroke-width="1.5"/></pattern></defs>
+<text class="h c" x="90" y="24">Bayer</text><text class="h c" x="270" y="24">Quad Bayer</text>
+<rect x="18" y="36" width="144" height="144" fill="url(#bay2)"/><rect x="18" y="36" width="144" height="144" fill="url(#gl1)"/>
+<rect x="198" y="36" width="144" height="144" fill="url(#qb)"/><rect x="198" y="36" width="144" height="144" fill="url(#gl2)"/>
+<text class="s c" x="90" y="202">ogni fotosito, un colore</text><text class="s c" x="270" y="202">gruppi di 4 dello stesso colore</text>
+<text class="s c" x="90" y="220">alternati uno a uno</text><text class="s c" x="270" y="220">si possono combinare (binning)</text>
+</svg><figcaption>Matrice Bayer classica e Quad Bayer (usata in diversi sensori per smartphone).</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/Quad_Bayer_CFA.svg" alt="Schema della matrice Quad Bayer con gruppi di filtri dello stesso colore" loading="lazy" onerror="imgFail(this)"><figcaption>Quad Bayer: filtri dello stesso colore raccolti in gruppi di quattro. <span class="cred">Schema: Mliu92, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. <a href="https://commons.wikimedia.org/wiki/File:Quad_Bayer_CFA.svg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<ul>
+<li><strong>Fujifilm X-Trans</strong>: usa una disposizione dei filtri diversa dal Bayer, presente in molti modelli della serie X. È progettata per ridurre moiré e falsi colori senza ricorrere necessariamente a un filtro passa-basso.</li>
+<li><strong>Foveon X3</strong>: usato in alcune fotocamere Sigma, impiega strati sovrapposti sensibili a diverse lunghezze d’onda. Cerca di registrare le componenti del colore nella stessa posizione, riducendo la necessità della demosaicizzazione Bayer tradizionale. Non significa però che la risoluzione reale sia automaticamente il triplo di un sensore Bayer con lo stesso numero dichiarato di pixel.</li>
+<li><strong>Quad Bayer</strong>: frequente negli smartphone. Raggruppa quattro fotositi adiacenti con filtri dello stesso colore; il software può combinare i loro segnali (<em>pixel binning</em>) per ottenere un’immagine con meno pixel ma spesso più pulita in poca luce.</li>
+</ul>
+<div class="box tip"><span class="lab">Non confondere le sigle</span><ul>
+<li>CCD / CMOS → come viene <em>letto</em> il segnale</li>
+<li>FSI / BSI → da che lato arriva la <em>luce</em></li>
+<li>Stacked → come sono disposti i <em>circuiti</em></li>
+<li>Bayer / X-Trans / Foveon → come si registra il <em>colore</em></li>
+<li>Rolling / global → come si legge l’immagine nel <em>tempo</em></li>
+</ul></div>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="8-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="8-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Fotografa un oggetto in movimento rapido (ventilatore, ruota) con otturatore meccanico ed elettronico: cerca deformazioni da rolling shutter.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="8-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Scrivi a mano una mini-tabella: CCD/CMOS, FSI/BSI, stacked, Bayer/Quad Bayer, con una riga su “che cosa cambia” per ciascuno.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="8-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Spiega perché BSI e stacked non sono sinonimi e da cosa nasce il rolling shutter.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="8-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="8-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="8-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c9" data-n="9" data-nav>
+<h2>9. Dimensioni del sensore e megapixel</h2>
+<div class="cmeta"><span class="chip" id="cm9"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<figure class="fig"><svg viewBox="0 0 360 270" role="img" aria-label="Confronto in scala tra full frame, APS-C e Micro Quattro Terzi">
+<rect class="ft" x="18" y="14" width="324" height="216"/>
+<rect class="fa" x="18" y="14" width="211.5" height="140.4"/>
+<rect class="fg" x="18" y="14" width="155.7" height="117"/>
+<text class="b e" x="334" y="222">Full frame 36 × 24 mm</text>
+<text class="b e" x="222" y="146">APS-C ≈ 23,5 × 15,6</text>
+<text class="b e" x="166" y="123">Micro 4/3 17,3 × 13</text>
+<text class="s c" x="180" y="254">Proporzioni reali tra i sensori (1 mm = 9 px)</text>
+</svg><figcaption>I tre formati più comuni a confronto, in scala. Il full frame ha una superficie molto maggiore di APS-C e Micro Quattro Terzi.</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://commons.wikimedia.org/wiki/Special:FilePath/Sensor_sizes_overlaid_inside.svg?width=900" alt="Confronto delle dimensioni dei sensori fotografici sovrapposti" loading="lazy" onerror="imgFail(this)"><figcaption>Altro confronto tra le dimensioni dei sensori, sovrapposti. <span class="cred">Fonte: Wikimedia Commons (autore e licenza sulla pagina del file). <a href="https://commons.wikimedia.org/wiki/File:Sensor_sizes_overlaid_inside.svg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<p>La dimensione fisica del sensore è importante quanto, e spesso più, del solo numero di megapixel.</p>
+<table>
+<thead><tr><th>Formato comune</th><th class="r">Dimensioni indicative</th></tr></thead>
+<tbody>
+<tr><td>Full frame</td><td class="r">36 × 24 mm</td></tr>
+<tr><td>APS-C Sony/Fujifilm/Nikon</td><td class="r">circa 23,5 × 15,6 mm</td></tr>
+<tr><td>APS-C Canon</td><td class="r">circa 22,3 × 14,9 mm</td></tr>
+<tr><td>Micro Quattro Terzi</td><td class="r">17,3 × 13,0 mm</td></tr>
+</tbody></table>
+<p>Il <strong>full frame</strong> ha dimensioni simili al fotogramma 24 × 36 mm della pellicola 35 mm. APS-C e Micro Quattro Terzi sono più piccoli. Esistono anche sensori più grandi del full frame, come quelli di alcune fotocamere medio formato digitali.</p>
+<p>A parità di tecnologia e condizioni di ripresa, un sensore più grande può raccogliere più luce complessiva e offrire vantaggi nella gestione del rumore e della gamma dinamica. Può inoltre facilitare una profondità di campo più ridotta a parità di inquadratura e condizioni equivalenti. Non significa però che una fotocamera con sensore più grande sia sempre migliore: contano anche obiettivo, tecnologia, esposizione e destinazione della fotografia.</p>
+<p>I <strong>megapixel</strong> indicano quanti pixel compongono l’immagine finale: 24 megapixel equivalgono a circa 24 milioni di pixel. Più megapixel possono permettere ritagli maggiori o stampe più dettagliate, ma non garantiscono automaticamente una fotografia migliore.</p>
+<div class="box ex"><span class="lab">Esempio Sony</span><p>Sia la α6600 sia la α7 III hanno circa 24,2 MP, ma la α6600 ha un sensore APS-C e la α7 III un sensore full frame BSI. Il numero di pixel è simile, ma la superficie del sensore è molto diversa.</p></div>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="9-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="9-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Calcola il fattore di crop della A6600 (APS-C, circa 1,5×) e scrivi l’equivalente full frame di 16 mm e di 50 mm.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="9-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Fotografa lo stesso soggetto dalla stessa posizione a 16, 24, 35 e 50 mm e annota come cambia l’inquadratura.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="9-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Perché i megapixel da soli non descrivono la qualità? Confronta APS-C e full frame.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="9-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="9-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="9-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c10" data-n="10" data-nav>
+<h2>10. Cosa usano i principali marchi</h2>
+<div class="cmeta"><span class="chip" id="cm10"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<p>I produttori non usano un solo sensore per tutta la gamma. La tecnologia cambia in base al modello e alla fascia; inoltre, il marchio della fotocamera non coincide necessariamente con chi produce materialmente il chip. Gli esempi servono a riconoscere alcune scelte tecnologiche, non a descrivere tutti i modelli del marchio.</p>
+<table class="resp">
+<thead><tr><th>Marchio e modello</th><th>Tecnologia / peculiarità da ricordare</th></tr></thead>
+<tbody>
+<tr><td>Sony α6600</td><td>APS-C Exmor CMOS da 24,2 MP; stabilizzazione a 5 assi tramite spostamento del sensore.</td></tr>
+<tr><td>Sony α7 III</td><td>Full frame Exmor R CMOS BSI da 24,2 MP; stabilizzazione a 5 assi sul sensore e comportamento a doppio guadagno con passaggio misurato intorno a ISO 640. È la α7 III standard, non la α7R III.</td></tr>
+<tr><td>Canon EOS R5 Mark II</td><td>Full frame BSI CMOS stacked; usa Dual Pixel CMOS AF, una tecnologia di autofocus a rilevamento di fase integrata nel sensore. Il Dual Pixel riguarda la messa a fuoco, non il formato RAW.</td></tr>
+<tr><td>Nikon D850</td><td>Reflex full frame con sensore BSI CMOS da 45,7 MP: dimostra che BSI non significa mirrorless.</td></tr>
+<tr><td>Nikon Z8</td><td>Mirrorless full frame con sensore CMOS stacked da 45,7 MP e stabilizzazione sul sensore.</td></tr>
+<tr><td>Fujifilm serie X</td><td>Molti modelli APS-C usano sensori X-Trans CMOS, con una matrice colore diversa dal Bayer. La serie GFX usa sensori medio formato CMOS.</td></tr>
+<tr><td>Panasonic Lumix S5II</td><td>Full frame CMOS; alcuni modelli Lumix offrono Dual Native ISO in specifiche modalità video, oltre a stabilizzazione sul corpo.</td></tr>
+<tr><td>OM SYSTEM OM-1 Mark II</td><td>Micro Quattro Terzi con sensore Stacked BSI Live MOS da 20,4 MP e stabilizzazione a 5 assi.</td></tr>
+<tr><td>Leica M11</td><td>Full frame BSI CMOS da circa 60 MP; utilizza anche il formato DNG.</td></tr>
+<tr><td>Pentax K-3 Mark III</td><td>Reflex APS-C CMOS con stabilizzazione SR II a 5 assi sul sensore. Anche una reflex può avere IBIS.</td></tr>
+<tr><td>Sigma, in alcuni modelli</td><td>Ha utilizzato sensori Foveon a strati, diversi dalla matrice Bayer più diffusa.</td></tr>
+</tbody></table>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="10-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="10-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Cerca la scheda tecnica di tre fotocamere di marchi diversi e scrivi dimensione e tipo di sensore.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="10-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Senza guardare il testo, scrivi un modello e un formato di sensore per ogni marchio del capitolo, poi verifica.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="10-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Nomina i marchi del capitolo e il tipo di sensore che usano di solito.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="10-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="10-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="10-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c11" data-n="11" data-nav>
+<h2>11. Reflex e mirrorless: che cosa cambia per il sensore</h2>
+<div class="cmeta"><span class="chip" id="cm11"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<figure class="fig"><svg viewBox="0 0 360 440" role="img" aria-label="Percorso della luce in una reflex con specchio e pentaprisma, e in una mirrorless dove la luce va direttamente al sensore">
+<g><text class="h c" x="180" y="18">REFLEX</text>
+<rect class="fx" x="62" y="28" width="288" height="176" rx="12"/>
+<rect class="fb" x="6" y="92" width="60" height="68" rx="6"/><text class="s c" x="36" y="180">obiettivo</text>
+<path class="lr" d="M66 126H176"/><path class="lr" d="M176 126V64" style="marker-end:url(#arr2)"/>
+<path class="th ds" d="M196 126H296"/>
+<path class="k" d="M152 150L202 100"/>
+<polygon class="fa" points="150,64 204,64 194,42 160,42"/>
+<path class="lr" d="M204 52H284" style="marker-end:url(#arr2)"/>
+<text class="s" x="76" y="56">pentaprisma</text><text class="s" x="76" y="190">specchio</text>
+<text class="b" x="262" y="40">mirino ottico</text>
+<rect class="fg" x="300" y="94" width="9" height="64"/><text class="s c" x="304" y="176">sensore</text>
+<text class="s c" x="230" y="194">(tratteggio: specchio alzato allo scatto)</text></g>
+<g transform="translate(0,222)"><text class="h c" x="180" y="18">MIRRORLESS</text>
+<rect class="fx" x="62" y="28" width="288" height="176" rx="12"/>
+<rect class="fb" x="6" y="92" width="60" height="68" rx="6"/><text class="s c" x="36" y="180">obiettivo</text>
+<path class="lr" d="M66 126H296" style="marker-end:url(#arr2)"/>
+<rect class="fg" x="300" y="94" width="9" height="64"/><text class="s c" x="304" y="176">sensore</text>
+<path class="ar" d="M304 90V66"/>
+<rect class="fv" x="248" y="40" width="94" height="24" rx="6"/><text class="s c" x="295" y="57" style="fill:var(--ink)">mirino elettronico</text>
+<text class="s c" x="180" y="196">nessuno specchio: la luce arriva sempre al sensore</text></g>
+</svg><figcaption>Schema semplificato del percorso della luce. In entrambi i casi il sensore può essere CMOS, BSI o stacked.</figcaption></figure>
+<figure class="fig photo"><span class="badge">Immagine da Internet</span><img src="https://upload.wikimedia.org/wikipedia/commons/a/a0/SLR_cross_section.svg" alt="Sezione interna di una fotocamera reflex con specchio e pentaprisma" loading="lazy" onerror="imgFail(this)"><figcaption>Sezione di una reflex: lo specchio devia la luce verso il mirino ottico. <span class="cred">Schema: Cburnett, Wikimedia Commons, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>. <a href="https://commons.wikimedia.org/wiki/File:SLR_cross_section.svg" target="_blank" rel="noopener">File</a></span></figcaption></figure>
+<p>La differenza principale tra <strong>reflex (DSLR)</strong> e <strong>mirrorless</strong> non è il tipo di sensore: entrambe possono usare CMOS, BSI, stacked e diversi formati.</p>
+<p><strong>Reflex (DSLR).</strong> Uno specchio riflette la luce verso il mirino ottico. Quando si scatta, lo specchio si solleva e la luce raggiunge il sensore. Nelle reflex tradizionali l’autofocus quando si usa il mirino ottico è spesso affidato a un modulo separato. In Live View, invece, la fotocamera usa il sensore d’immagine per mostrare la scena e mettere a fuoco.</p>
+<p><strong>Mirrorless.</strong> Non ha lo specchio. La luce raggiunge direttamente il sensore, che fornisce in tempo reale l’immagine al display o al mirino elettronico. La messa a fuoco è spesso gestita da sistemi a rilevamento di fase integrati nel sensore, insieme ad altri sistemi di analisi.</p>
+<p>Nella mirrorless il sensore lavora spesso in modo continuo: per questo la velocità di lettura è particolarmente importante per mirino elettronico, video e raffiche. Ma non bisogna pensare che ogni mirrorless abbia per forza un sensore migliore o di un tipo completamente diverso da quello di una reflex.</p>
+<div class="box ex"><span class="lab">Esempio</span><p>La Nikon D850 è una reflex con sensore BSI; la Nikon Z8 è una mirrorless con sensore stacked. La differenza tra i due sistemi riguarda soprattutto il mirino e il percorso della luce, non una divisione netta tra tecnologie di sensore.</p></div>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="11-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="11-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Nel mirino elettronico della A6600 cambia ISO e tempo e osserva la luminosità prima dello scatto.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="11-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Disegna a mano il percorso della luce in una reflex e in una mirrorless.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="11-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Qual è la differenza principale tra reflex e mirrorless e che cosa non cambia per il sensore?</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="11-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="11-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="11-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c12" data-n="12" data-nav>
+<h2>12. Stabilizzazione sul sensore (IBIS)</h2>
+<div class="cmeta"><span class="chip" id="cm12"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<figure class="fig"><svg viewBox="0 0 360 250" role="img" aria-label="Il sensore si sposta dentro il corpo macchina per compensare il tremolio">
+<rect class="fx" x="20" y="40" width="320" height="170" rx="24"/>
+<rect class="ft" x="130" y="86" width="100" height="80" rx="8" style="stroke:var(--accent);stroke-width:3"/>
+<text class="h c" x="180" y="123">SENSORE</text><text class="s c" x="180" y="143">si sposta</text>
+<path class="ar" d="M122 126H62"/><path class="ar" d="M238 126H298"/><path class="ar" d="M180 78V50"/><path class="ar" d="M180 174V204"/>
+<path class="ar2" d="M252 84A34 34 0 0 1 280 114"/>
+<text class="s" x="266" y="78">rotazione</text>
+<text class="s c" x="180" y="236">compensa il tremolio della fotocamera, non il soggetto</text>
+</svg><figcaption>Il sensore si sposta per compensare i piccoli movimenti del corpo macchina. I sistemi a 5 assi combinano spostamenti e rotazioni.</figcaption></figure>
+<p>La stabilizzazione integrata nel corpo macchina è chiamata <strong>IBIS</strong> (<em>In-Body Image Stabilization</em>). La fotocamera rileva i piccoli movimenti del corpo e sposta il sensore per compensarli durante lo scatto.</p>
+<p>Nei sistemi a 5 assi vengono compensate, in modo semplificato:</p>
+<ul>
+<li>spostamenti orizzontali e verticali;</li>
+<li>inclinazioni verso l’alto/basso (<em>pitch</em>) e destra/sinistra (<em>yaw</em>);</li>
+<li>rotazione attorno all’asse dell’obiettivo (<em>roll</em>).</li>
+</ul>
+<p>Esiste anche la stabilizzazione ottica nell’obiettivo (<strong>OIS</strong>), che sposta alcuni elementi ottici. Nei sistemi compatibili IBIS e OIS possono collaborare.</p>
+<p><strong>Che cosa migliora:</strong> riduce il mosso causato dai piccoli movimenti del fotografo e permette, soprattutto con soggetti fermi, di usare tempi più lenti a mano libera.</p>
+<p><strong>Che cosa non fa:</strong> non ferma il movimento del soggetto. Se fotografi una persona che corre con un tempo troppo lento, l’IBIS può ridurre il movimento della fotocamera, ma la persona può comunque risultare mossa.</p>
+<div class="box ex"><span class="lab">Esempio</span><p>Fotografando una statua in un interno poco illuminato, la stabilizzazione può aiutare a scattare a mano libera con un tempo più lento. Fotografando un bambino che corre, invece, serve soprattutto un tempo rapido: la stabilizzazione da sola non congela il movimento.</p></div>
+<p>Il numero di “stop” dichiarato dal produttore indica un miglioramento misurato in condizioni di prova; il risultato reale dipende da focale, tecnica, movimento e soggetto.</p>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="12-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="12-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Con il 16-50 a 50 mm scatta a mano libera a 1/30, 1/15 e 1/8 con stabilizzazione attiva e disattiva: quante foto restano nitide?</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="12-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Annota il tempo più lento che riesci a usare nitido senza e con stabilizzazione: la differenza in stop è il tuo guadagno.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="12-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Spiega come lavora l’IBIS a 5 assi e in cosa differisce dalla stabilizzazione nell’obiettivo.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="12-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="12-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="12-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c13" data-n="13" data-nav>
+<h2>13. I sensori degli smartphone moderni</h2>
+<div class="cmeta"><span class="chip" id="cm13"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<figure class="fig"><svg viewBox="0 0 360 330" role="img" aria-label="Più moduli fotografici, sensori piccoli e software che combina più scatti">
+<rect class="fb" x="10" y="6" width="340" height="86" rx="12"/>
+<circle class="fd" cx="62" cy="38" r="16"/><circle class="fd" cx="180" cy="38" r="16"/><circle class="fd" cx="298" cy="38" r="16"/>
+<text class="s c" x="62" y="72">principale</text><text class="s c" x="180" y="72">ultra-grandangolo</text><text class="s c" x="298" y="72">tele</text>
+<path class="ar" d="M180 94V114"/>
+<rect class="fa" x="10" y="116" width="340" height="88" rx="12"/><text class="h c" x="180" y="146">SENSORI PICCOLI</text><text class="s c" x="180" y="168">molti fotositi minuscoli</text><text class="s c" x="180" y="186">spesso con Quad Bayer e BSI</text>
+<path class="ar" d="M180 206V226"/>
+<rect class="fg" x="10" y="228" width="340" height="92" rx="12"/><text class="h c" x="180" y="256">SOFTWARE</text><text class="s c" x="180" y="278">combina più scatti · riduce il rumore</text><text class="s c" x="180" y="296">ricostruisce l’HDR · stima la profondità</text>
+</svg><figcaption>Nei telefoni il risultato nasce dalla collaborazione tra moduli fotografici, sensore e software di elaborazione.</figcaption></figure>
+<p>Anche gli smartphone usano sensori digitali CMOS, spesso con struttura BSI e, in molti casi, circuiti impilati (<em>stacked</em>). Il sensore è generalmente molto più piccolo di quello di una fotocamera a obiettivi intercambiabili: per questo i produttori combinano dimensioni, filtri, ottiche ed elaborazione software.</p>
+<h3>13.1 Più fotocamere, più obiettivi</h3>
+<p>Molti telefoni hanno più moduli: <strong>principale</strong>, <strong>ultra-grandangolare</strong> e <strong>teleobiettivo</strong>. Non sono semplicemente zoom digitali diversi: ogni modulo può avere una propria lente e un proprio sensore, con dimensioni e qualità differenti. Il modulo principale è spesso quello con il sensore più grande e luminoso.</p>
+<h3>13.2 Pixel piccoli e pixel binning</h3>
+<p>Per aumentare la risoluzione, alcuni sensori mobili hanno 48, 50, 108 o 200 MP. In uno spazio piccolo, però, tanti fotositi significano spesso fotositi più piccoli, che raccolgono meno luce singolarmente.</p>
+<figure class="fig"><svg viewBox="0 0 360 190" role="img" aria-label="Pixel binning: quattro fotositi dello stesso colore diventano un pixel più grande">
+<defs><pattern id="qb2" x="24" y="30" width="96" height="96" patternUnits="userSpaceOnUse"><rect width="48" height="48" fill="#d9534f"/><rect x="48" width="48" height="48" fill="#4fa957"/><rect y="48" width="48" height="48" fill="#4fa957"/><rect x="48" y="48" width="48" height="48" fill="#4a8fd9"/></pattern>
+<pattern id="gl3" x="24" y="30" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="none" stroke="var(--card)" stroke-width="1.5"/></pattern></defs>
+<rect x="24" y="30" width="96" height="96" fill="url(#qb2)"/><rect x="24" y="30" width="96" height="96" fill="url(#gl3)"/>
+<path class="ar" d="M132 78H224"/><text class="s c" x="178" y="68">binning</text><text class="s c" x="178" y="98">4 → 1</text>
+<g transform="translate(240,30)"><rect width="48" height="48" fill="#d9534f"/><rect x="48" width="48" height="48" fill="#4fa957"/><rect y="48" width="48" height="48" fill="#4fa957"/><rect x="48" y="48" width="48" height="48" fill="#4a8fd9"/></g>
+<text class="s c" x="72" y="150">16 fotositi piccoli</text><text class="s c" x="288" y="150">4 pixel più grandi</text>
+<text class="s c" x="72" y="168">(più risoluzione)</text><text class="s c" x="288" y="168">(più luce per pixel)</text>
+</svg><figcaption>Esempio: da un sensore da 48 MP si può ottenere una foto da circa 12 MP, di solito più pulita in poca luce.</figcaption></figure>
+<p>Per compensare, molti usano una disposizione <strong>Quad Bayer</strong> o simile: quattro fotositi vicini hanno filtri dello stesso colore. Il telefono può unirne i segnali con il <strong>pixel binning</strong> e produrre, per esempio, una foto da circa 12 MP a partire da un sensore da 48 MP. In genere si rinuncia a una parte della risoluzione nominale per ottenere un’immagine più gestibile e spesso più pulita in poca luce. Il comportamento preciso dipende dal sensore e dal software.</p>
+<h3>13.3 Fotografia computazionale</h3>
+<p>Il telefono non si limita sempre a registrare un singolo scatto. Può acquisire rapidamente più immagini e combinarle:</p>
+<ul>
+<li><strong>HDR</strong>: combina esposizioni differenti per conservare dettagli nelle luci e nelle ombre.</li>
+<li><strong>Modalità Notte</strong>: unisce più fotogrammi per aumentare la luminosità e ridurre il rumore.</li>
+<li><strong>Riduzione del rumore e nitidezza</strong>: il software analizza e corregge l’immagine, cercando di mantenere i dettagli.</li>
+<li><strong>Ritratto</strong>: usa le informazioni di più fotocamere o algoritmi per stimare la profondità e sfocare lo sfondo.</li>
+</ul>
+<div class="box ex"><span class="lab">Esempio pratico</span><p>Di notte il telefono può combinare più scatti per ottenere una fotografia più luminosa di un singolo fotogramma. Se una persona si muove durante la sequenza, però, alcune parti possono risultare sdoppiate, sfocate o ricostruite in modo imperfetto.</p></div>
+<h3>13.4 Stabilizzazione nei telefoni</h3>
+<ul>
+<li><strong>OIS</strong>: muove elementi dell’obiettivo per compensare il tremolio;</li>
+<li><strong>sensor-shift</strong>: muove il sensore stesso;</li>
+<li><strong>EIS</strong>: stabilizzazione elettronica, che usa il ritaglio dell’immagine e l’elaborazione per rendere il video più stabile.</li>
+</ul>
+<p>Questi sistemi possono essere combinati. Non tutti gli smartphone usano sensor-shift: in molti modelli la stabilizzazione principale è ottica nell’obiettivo, affiancata da quella elettronica nei video.</p>
+<p>Il numero di megapixel non basta per giudicare la qualità: 200 MP non significano automaticamente una foto migliore di una fotocamera da 24 MP. Contano anche dimensioni del sensore, qualità dell’obiettivo, luce, stabilizzazione ed elaborazione.</p>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="13-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="13-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Fotografa la stessa scena con lo smartphone e con la A6600: confronta ombre, alte luci e dettaglio a zoom 100%.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="13-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Scatta di notte con telefono e A6600 a ISO 3200: che cosa ha elaborato di più il software?</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="13-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Spiega pixel binning e fotografia computazionale con un esempio.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="13-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="13-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="13-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c14" data-n="14" data-nav>
+<h2>14. Timeline: le tappe che hanno cambiato la fotografia</h2>
+<div class="cmeta"><span class="chip" id="cm14"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<ol class="tl">
+<li><span class="y">1889</span><strong>Kodak introduce una pellicola trasparente in rullo commerciale.</strong><span class="w">La fotografia diventa più pratica rispetto all’uso delle lastre.</span></li>
+<li><span class="y">1925</span><strong>Presentazione al pubblico della Leica I a formato 35 mm.</strong><span class="w">Il formato 24 × 36 mm contribuisce alla diffusione delle fotocamere compatte.</span></li>
+<li><span class="y">1935</span><strong>Arriva Kodachrome, pellicola a colori di grande successo.</strong><span class="w">La fotografia a colori acquista popolarità.</span></li>
+<li><span class="y">1948</span><strong>Edwin Land presenta la prima fotocamera Polaroid istantanea.</strong><span class="w">Sviluppo e stampa iniziano a svolgersi direttamente dopo lo scatto.</span></li>
+<li><span class="y">1975</span><strong>Steven Sasson realizza per Kodak il prototipo di una fotocamera digitale autonoma.</strong><span class="w">La luce viene registrata da un sensore e trasformata in dati digitali.</span></li>
+<li><span class="y">1991</span><strong>Kodak commercializza il sistema DCS 100, basato su una reflex Nikon e un sensore CCD da 1,3 MP.</strong><span class="w">La fotografia digitale entra nel lavoro professionale.</span></li>
+<li><span class="y">1999</span><strong>Si diffondono i primi telefoni cellulari con fotocamera integrata.</strong><span class="w">La fotografia inizia a diventare una funzione quotidiana del telefono.</span></li>
+<li><span class="y">2008</span><strong>Panasonic presenta la Lumix G1, fotocamera a obiettivi intercambiabili senza specchio del sistema Micro Quattro Terzi.</strong><span class="w">Si afferma la generazione moderna delle mirrorless.</span></li>
+<li><span class="y">2012</span><strong>OM-D E-M5 porta la stabilizzazione a 5 assi sul sensore in una mirrorless compatta.</strong><span class="w">La stabilizzazione integrata diventa una caratteristica importante.</span></li>
+<li><span class="y">2014</span><strong>Sony presenta la α7 II, prima full frame con stabilizzazione a 5 assi sul sensore.</strong><span class="w">L’IBIS si diffonde anche nel formato full frame.</span></li>
+</ol>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="14-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="14-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Ricostruisci la timeline a memoria su un foglio, poi confrontala con il capitolo.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="14-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Scegli la tappa che ti incuriosisce di più e fai una foto che la ricordi (per esempio in bianco e nero).</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="14-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Dimmi tre date chiave e perché hanno cambiato la fotografia.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="14-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="14-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="14-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c15" data-n="15" data-nav>
+<h2>15. Esempi pratici per fissare i concetti</h2>
+<div class="cmeta"><span class="chip" id="cm15"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<div class="box ex"><span class="lab">Caso A · Rullo ISO 100 in una stanza poco illuminata</span><p>La sensibilità è quella scelta per tutto il rullo. Per far entrare più luce si può aprire il diaframma o allungare il tempo; il tempo più lento aumenta il rischio di mosso. Non si può impostare ISO 1600 per un solo fotogramma come su una digitale, a meno di ricorrere a tecniche di esposizione e sviluppo forzato.</p></div>
+<div class="box ex"><span class="lab">Caso B · Sony α6600 e Sony α7 III, entrambe da 24,2 MP</span><p>Il numero di pixel è simile, ma la α6600 ha un sensore APS-C e la α7 III un full frame BSI. Il sensore full frame ha una superficie maggiore; i megapixel, da soli, non descrivono tutta la capacità di raccogliere luce.</p></div>
+<div class="box ex"><span class="lab">Caso C · Foto notturna di una persona in movimento</span><p>L’IBIS aiuta a compensare il tremolio della fotocamera, ma non blocca la persona. Per fermare il movimento serve un tempo sufficientemente rapido; potrebbe essere necessario aumentare gli ISO o usare più luce.</p></div>
+<div class="box ex"><span class="lab">Caso D · RAW scuro che diventa leggibile</span><p>Una foto appare quasi nera sul display. Aprendo il RAW e aumentando le ombre si vedono alcuni dettagli del viso. Se però la fotografia è stata sottoesposta molto, schiarire farà emergere anche rumore e macchie: il RAW recupera dati registrati, non inventa luce.</p></div>
+<div class="box ex"><span class="lab">Caso E · Cielo bianco davanti a una finestra</span><p>Abbassando le alte luci nel RAW possono riapparire nuvole e dettagli, se non erano completamente saturi nel sensore. Se tutti i dettagli sono stati bruciati in ripresa, non sono recuperabili.</p></div>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="15-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="15-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Riproduci il Caso E (cielo bianco davanti a una finestra) con la A6600 e prova a salvare i dettagli con compensazione EV e RAW.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="15-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Riproduci il Caso D: scatta un RAW scuro e recuperalo in post-produzione.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="15-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Senza guardare, risolvi a parole i casi A e C: quali impostazioni sceglieresti?</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="15-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="15-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="15-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c16" data-n="16" data-nav>
+<h2>16. Riepilogo in otto punti</h2>
+<div class="cmeta"><span class="chip" id="cm16"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<ol>
+<li>Pellicola e sensore stanno dietro l’obiettivo e registrano la luce: la prima con una reazione chimica, il secondo con cariche elettriche.</li>
+<li>Diaframma, tempo e ISO formano il triangolo dell’esposizione; ogni passo è uno stop (luce ×2 o ÷2).</li>
+<li>L’ISO digitale amplifica il segnale: non raccoglie più luce.</li>
+<li>Il sensore ha filtri colore (Bayer): il colore viene ricostruito dal processore.</li>
+<li>Il RAW conserva più margine del JPEG, ma non recupera ciò che il sensore non ha registrato.</li>
+<li>Il sensore ha due limiti: saturazione in alto, rumore in basso. In mezzo c’è la gamma dinamica.</li>
+<li>Il rumore ha tre origini principali: luce, lettura elettronica e calore.</li>
+<li>Dimensione del sensore, tecnologia (BSI, stacked) e software contano più del solo numero di megapixel.</li>
+</ol>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="16-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="16-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Riscrivi gli otto punti con parole tue su un foglio o nelle note del telefono.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="16-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Per ogni punto scrivi una foto di prova che lo dimostra.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="16-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Recita gli otto punti a voce senza guardare.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="16-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="16-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="16-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="chap sec" id="c17" data-n="17" data-nav>
+<h2>17. Parole da ricordare</h2>
+<div class="cmeta"><span class="chip" id="cm17"></span><span class="chip">95 XP</span></div>
+<div class="tabs" role="tablist"><button type="button" role="tab" aria-selected="true" data-t="0">Studia <small></small></button><button type="button" role="tab" aria-selected="false" data-t="1">Fai <small></small></button><button type="button" role="tab" aria-selected="false" data-t="2">Ripeti <small></small></button></div>
+<div class="pn">
+
+<dl class="gl">
+<dt>Emulsione</dt><dd>Strato della pellicola che contiene i materiali sensibili alla luce.</dd>
+<dt>Immagine latente</dt><dd>Immagine chimica invisibile che si forma sulla pellicola dopo l’esposizione.</dd>
+<dt>Fotosito</dt><dd>Singola unità sensibile alla luce sul sensore.</dd>
+<dt>Pixel</dt><dd>Punto che compone l’immagine digitale finale.</dd>
+<dt>Demosaicizzazione</dt><dd>Ricostruzione dei colori mancanti a partire dai dati dei filtri del sensore.</dd>
+<dt>RAW</dt><dd>File con i dati del sensore e ampio margine di sviluppo, ma non una fotografia completamente pronta.</dd>
+<dt>Bit</dt><dd>Unità che determina quanti livelli numerici possono rappresentare un dato.</dd>
+<dt>Gamma dinamica</dt><dd>Intervallo tra i dettagli più luminosi e quelli più scuri che il sensore riesce a registrare in modo utile.</dd>
+<dt>Guadagno</dt><dd>Amplificazione del segnale elettrico letto dal sensore.</dd>
+<dt>Dual Conversion Gain</dt><dd>Sistema che consente al sensore di leggere il segnale con due livelli di guadagno di conversione.</dd>
+<dt>Rumore di lettura</dt><dd>Disturbo introdotto dall’elettronica durante la lettura del sensore.</dd>
+<dt>Dark current</dt><dd>Cariche generate dal calore anche in assenza di luce.</dd>
+<dt>BSI</dt><dd>Struttura che facilita l’arrivo della luce al fotodiodo spostando i collegamenti elettronici dietro lo strato fotosensibile.</dd>
+<dt>Stacked</dt><dd>Sensore con strati sovrapposti per integrare circuiti e velocizzare la lettura.</dd>
+<dt>IBIS</dt><dd>Stabilizzazione ottenuta muovendo il sensore all’interno del corpo macchina.</dd>
+<dt>Rolling shutter</dt><dd>Lettura progressiva del sensore, riga per riga.</dd>
+</dl>
+
+
+<p class="step">Tappa 1 · Studia: quando hai letto il capitolo e guardato gli schemi, segnalo.</p>
+<label class="goal"><input type="checkbox" data-k="17-s" data-x="10" data-g="s"><span class="t"><b>Ho studiato il capitolo</b> e guardato tutti gli schemi.</span><span class="x">+10 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 2 · Fai: porta la teoria nella pratica con la tua A6600 e il 16-50.</p>
+<label class="goal"><input type="checkbox" data-k="17-f0" data-x="20" data-g="f"><span class="t"><b>Missione 1.</b> Crea 10 flashcard con le parole del capitolo, con la definizione sul retro.</span><span class="x">+20 XP</span></label><label class="goal"><input type="checkbox" data-k="17-f1" data-x="20" data-g="f"><span class="t"><b>Missione 2.</b> Usa almeno 5 di queste parole spiegando a un amico come nasce una foto.</span><span class="x">+20 XP</span></label>
+</div>
+<div class="pn" hidden>
+<p class="step">Tappa 3 · Ripeti: richiamare spesso, a intervalli crescenti, è ciò che fissa il concetto.</p>
+<label class="goal"><input type="checkbox" data-k="17-r" data-x="15" data-g="r"><span class="t"><b>Richiamo a voce.</b> Ripassa le flashcard: quante ricordi al primo colpo? Punta a 10 su 10.</span><span class="x">+15 XP</span></label><label class="goal"><input type="checkbox" data-k="17-p1" data-x="10" data-g="r"><span class="t"><b>Ripasso 1</b> (dopo 1 giorno): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="1"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="17-p2" data-x="10" data-g="r"><span class="t"><b>Ripasso 2</b> (dopo 3 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="3"></span></span><span class="x">+10 XP</span></label><label class="goal"><input type="checkbox" data-k="17-p3" data-x="10" data-g="r"><span class="t"><b>Ripasso 3</b> (dopo 7 giorni): rileggi il riepilogo e rifai una missione in una situazione nuova.<span class="ph" data-d="7"></span></span><span class="x">+10 XP</span></label>
+</div>
+</section>
+<section class="sec" id="boss" data-nav>
+<h2>Sfida finale</h2>
+<p id="bossLock">Si sblocca quando completi tutti gli obiettivi dei 17 capitoli (1.615 XP).</p>
+<div id="bossOpen" hidden><p>Scegli una scena difficile: controluce, interno scuro o soggetto in movimento. Scattala in RAW con tre combinazioni diverse di ISO, tempo e diaframma, spiegando a voce perché le hai scelte. Confronta i file a 100%, poi ripeti la stessa scena tra una settimana e confronta ancora. Quando sai prevedere il risultato prima di scattare, sei un fotografo migliore.</p></div>
+</section>
+<section class="sec" id="fonti" data-nav>
+<h2>Fonti e riferimenti</h2>
+<p>Le fonti seguenti sono state consultate per verificare i concetti e le specifiche. Le pagine dei produttori sono preferibili per le caratteristiche dichiarate; le misurazioni indipendenti sono indicate come tali. Le specifiche possono variare con firmware, impostazioni e modalità di ripresa. Tocca un gruppo per aprirlo.</p>
+<details class="src"><summary>Fonti sulla pellicola</summary><ol>
+<li><a href="https://global.canon/en/technology/s_labo/light/003/01.html">Canon – Chemical change on silver-halide film</a> – formazione dell’immagine latente e uso degli alogenuri d’argento.</li>
+<li><a href="https://www.canada.ca/en/conservation-institute/services/conservation-preservation-publications/canadian-conservation-institute-notes/black-white-photographic-films-papers-permanence.html">Canadian Conservation Institute – Processing of black-and-white photographic films</a> – sviluppo, fissaggio e conservazione delle pellicole B/N.</li>
+<li><a href="https://www.kodak.com/content/products-brochures/Film/kodak-essential-reference-guide-for-filmmakers.pdf">Kodak – Essential Reference Guide for Filmmakers</a> – pellicole, esposizione e latitudine di posa.</li>
+<li><a href="https://www.ilfordphoto.com/reversal-processing/">Ilford – Reversal Processing</a> – principio del trattamento invertibile.</li>
+<li><a href="https://support.polaroid.com/hc/en-us/articles/115012554908-What-s-inside-a-polaroid-film-box">Polaroid – What’s inside a Polaroid film box?</a> – strati e reagenti della pellicola istantanea.</li>
+<li><a href="https://www.ishootfujifilm.com/film-101/film-terminology">Fujifilm – Film terminology</a> – terminologia e formati della pellicola.</li>
+<li><a href="https://www.kodak.com/en/company/page/photography-history/">Kodak – Photography history</a> – storia della fotografia e della pellicola.</li>
+</ol></details>
+<details class="src"><summary>RAW, bit e gamma dinamica</summary><ol>
+<li><a href="https://www.sony.it/electronics/support/articles/00024655">Sony – Che cos’è un file RAW</a> – significato del RAW e differenza rispetto al JPEG.</li>
+<li><a href="https://helpguide.sony.net/ilc/1940/v1/it/contents/TP0002685361.html">Sony – Guida α6600, formato file</a> – RAW compresso e profondità a 14/12 bit secondo le modalità.</li>
+<li><a href="https://helpguide.sony.net/ilc/1720/v1/it/contents/TP0001667707.html">Sony – Guida α7 III, formato file</a> – RAW compresso/non compresso e profondità a 14/12 bit.</li>
+<li><a href="https://www.sony.it/electronics/support/digital-cameras-interchangeable-lens-cameras/articles/00229990">Sony – Limitazioni alla registrazione RAW a 14 bit</a> – tabella ufficiale delle modalità che limitano la registrazione a 12 bit.</li>
+<li><a href="https://www.nikonusa.com/learn-and-explore/c/products-and-innovation/nikon-electronic-format-nef">Nikon – Nikon Electronic Format (NEF)</a> – informazioni conservate in un RAW e differenze rispetto al JPEG.</li>
+<li><a href="https://helpx.adobe.com/camera-raw/desktop/dng-and-file-formats/digital-negative.html">Adobe – Digital Negative (DNG)</a> – formato RAW con specifiche pubbliche e compatibilità.</li>
+<li><a href="https://www.cambridgeincolour.com/tutorials/dynamic-range.htm">Cambridge in Colour – Dynamic Range in Digital Photography</a> – gamma dinamica della scena, del sensore e dei dispositivi di visualizzazione.</li>
+<li><a href="https://helpx.adobe.com/in/camera-raw/desktop/using/make-color-tonal-adjustments-camera.html">Adobe – Regolazioni di luci e ombre in Camera Raw</a> – regolazioni di alte luci e ombre e limiti del recupero.</li>
+</ol></details>
+<details class="src"><summary>Guadagno, rumore e sensori</summary><ol>
+<li><a href="https://www.dpreview.com/articles/1570070253/what-is-dual-gain-and-how-does-it-work/">DPReview – What is dual gain and how does it work?</a> – spiegazione del doppio guadagno di conversione e differenza rispetto al doppio guadagno in uscita.</li>
+<li><a href="https://www.dpreview.com/reviews/2862078074/sony-a7-iii-review/">DPReview – Sony α7 III Review</a> – misurazioni indipendenti; passaggio al secondo livello di guadagno intorno a ISO 640.</li>
+<li><a href="https://www.dxomark.com/sony-a6600-sensor-review/">DXOMARK – Sony A6600 Sensor Review</a> – misurazioni indipendenti di gamma dinamica e comportamento della sensibilità della α6600.</li>
+<li><a href="https://www.teledynevisionsolutions.com/learn/learning-center/imaging-fundamentals/dark-current/">Teledyne Photometrics – Dark Current</a> – contributo termico, durata di esposizione e temperatura.</li>
+<li><a href="https://www.sony-semicon.com/en/technology/is/back-illuminated.html">Sony Semiconductor – Back-illuminated structure</a> – funzionamento della struttura BSI.</li>
+<li><a href="https://www.sony-semicon.com/en/technology/mobile/quad-bayer-coding.html">Sony Semiconductor – Quad Bayer Coding</a> – raggruppamento dei fotositi nei sensori mobili.</li>
+<li><a href="https://www.sony-semicon.com/en/technology/industry/pregius.html">Sony Semiconductor – Global shutter</a> – differenza tra global shutter e rolling shutter.</li>
+<li><a href="https://www.sigma-global.com/en/support/faq/6015/">SIGMA – Foveon sensors</a> – struttura a strati e differenze rispetto alla matrice Bayer.</li>
+<li><a href="https://www.fujifilm-x.com/id-id/products/x-trans-cmos/">Fujifilm – X-Trans CMOS</a> – disposizione dei filtri X-Trans.</li>
+</ol></details>
+<details class="src"><summary>Esempi dei produttori</summary><ol>
+<li><a href="https://helpguide.sony.net/ilc/1940/v1/it/contents/TP0002687080.html">Sony α6600 – specifiche</a> – sensore APS-C da 24,2 MP e stabilizzazione con spostamento del sensore.</li>
+<li><a href="https://helpguide.sony.net/ilc/1720/v1/it/contents/TP0001667725.html">Sony α7 III – specifiche</a> – sensore full frame da 24,2 MP e stabilizzazione sul sensore.</li>
+<li><a href="https://sony.mediaroom.com/2018-02-26-Sony-Expands-Full-frame-Mirrorless-Lineup-with-Introduction-of-New-7-III-Camera">Sony – annuncio α7 III</a> – sensore Exmor R BSI e caratteristiche del modello standard α7 III.</li>
+<li><a href="https://www.usa.canon.com/support/p/eos-r5-mark-ii">Canon EOS R5 Mark II – supporto e specifiche</a> – sensore e funzioni del modello.</li>
+<li><a href="https://global.canon/en/technology/canon-tech/tech/dslr/">Canon – Dual Pixel CMOS AF</a> – principio dell’autofocus Dual Pixel.</li>
+<li><a href="https://imaging.nikon.com/imaging/lineup/dslr/d850/">Nikon D850</a> – esempio di reflex con sensore BSI.</li>
+<li><a href="https://www.nikon.it/it_IT/product/cameras/mirrorless/z-8">Nikon Z8 – pagina prodotto</a> – sensore stacked e stabilizzazione.</li>
+<li><a href="https://www.fujifilm.com/it/it/consumer/digitalcameras/x">Fujifilm – Serie X</a> – sensori X-Trans.</li>
+<li><a href="https://www.panasonic.com/it/consumer/fotocamere-e-videocamere/fotocamere-lumix-s/dc-s5m2h.html">Panasonic Lumix S5II – specifiche</a> – sensore full frame, autofocus e stabilizzazione.</li>
+<li><a href="https://explore.omsystem.com/it/it/om-1-mark-ii">OM SYSTEM OM-1 Mark II – specifiche</a> – sensore stacked BSI Live MOS e stabilizzazione a 5 assi.</li>
+<li><a href="https://leica-camera.com/it-IT/fotografia/fotocamera/m/m11-glossy-black/specifiche-tecniche">Leica M11 – specifiche</a> – sensore full frame e formato DNG.</li>
+<li><a href="https://www.ricoh-imaging.co.jp/english/products/k-3-3/spec/">Pentax K-3 Mark III – specifiche</a> – reflex APS-C e stabilizzazione sul sensore.</li>
+</ol></details>
+<details class="src"><summary>Fonti per la timeline</summary><ol>
+<li><a href="https://www.kodak.com/en/company/page/milestones/">Kodak – Milestones</a> – tappe della storia Kodak.</li>
+<li><a href="https://leica-camera.com/en-US/photography/100-years/the-history-of-the-leica-I">Leica – History of the Leica I</a> – storia della Leica I del 1925.</li>
+<li><a href="https://www.digitalhistory.uh.edu/active_learning/explorations/photographs_history/timeline_photography.cfm">University of Houston – Photography timeline</a> – tappe della storia fotografica.</li>
+<li><a href="https://www.invent.org/inductees/steven-sasson">National Inventors Hall of Fame – Steven Sasson</a> – prototipo digitale del 1975.</li>
+<li><a href="https://www.panasonic.com/global/consumer/lumix/20th/history/2008.html">Panasonic – 2008: Lumix G1</a> – presentazione della Lumix G1.</li>
+<li><a href="https://www.om-digitalsolutions.com/en/product-history/om-d_e-m5/index.html">OM Digital Solutions – OM-D E-M5</a> – stabilizzazione a 5 assi nel 2012.</li>
+<li><a href="https://sony.mediaroom.com/2014-11-26-Sony-Introduces-the-a7II-the-Worlds-First-Full-Frame-Camera-with-5-Axis-Image-Stabilization">Sony – α7 II</a> – IBIS full frame nel 2014.</li>
+</ol></details>
+
+</section>
+<section class="sec" id="crediti" data-nav>
+<h2>Crediti delle immagini</h2>
+<p>Gli schemi disegnati per questa dispensa sono originali e incorporati nel file. Le immagini “da Internet” sono caricate da Wikimedia Commons: l’autore e la licenza di ciascuna sono indicati nella pagina del file, raggiungibile dal link “File” sotto la figura. Le licenze Creative Commons richiedono di citare l’autore.</p>
+<ul>
+<li><strong>Negativo 35 mm</strong> — Runner1616, CC BY-SA 3.0.</li>
+<li><strong>Sensore digitale fotografico</strong> — John Carney, CC BY 2.0.</li>
+<li><strong>Filtro Bayer visto di profilo</strong> — Cburnett, CC BY-SA 3.0.</li>
+<li><strong>Sezione di una reflex</strong> — Cburnett, CC BY-SA 3.0.</li>
+<li><strong>Matrice Quad Bayer</strong> — Mliu92, CC BY-SA 4.0.</li>
+<li><strong>Strati dell’emulsione, rulli 127/135/120, confronto FSI/BSI, elica con rolling shutter, sensori sovrapposti</strong> — Wikimedia Commons; autore e licenza nella pagina di ciascun file.</li>
+</ul>
+<p><small>Se non c’è Internet, le immagini esterne non compaiono ma il testo e tutti gli schemi disegnati restano leggibili.</small></p>
+
+</section>
+</article></main></div>
+<footer>Dispensa didattica – Pellicola e sensori digitali · Le figure sono schemi illustrativi. I progressi sono salvati su questo dispositivo.</footer>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+var d=document,root=d.documentElement;
+/* tema */
+var tIc=d.getElementById('themeIc'),tTx=d.getElementById('themeTx');
+function paint(){var dk=root.getAttribute('data-theme')==='dark';tIc.textContent=dk?'☀':'☾';tTx.textContent=dk?'Chiaro':'Scuro';}
+paint();
+d.getElementById('themeBtn').addEventListener('click',function(){
+ var n=root.getAttribute('data-theme')==='dark'?'light':'dark';
+ root.setAttribute('data-theme',n);try{localStorage.setItem('theme',n)}catch(e){}paint();});
+
+var dr=d.getElementById('drawer'),sc=d.getElementById('scrim'),mb=d.getElementById('menuBtn');
+function openM(o){dr.classList.toggle('open',o);sc.classList.toggle('open',o);mb.setAttribute('aria-expanded',o?'true':'false');}
+mb.addEventListener('click',function(){openM(!dr.classList.contains('open'))});
+d.getElementById('closeBtn').addEventListener('click',function(){openM(false)});
+sc.addEventListener('click',function(){openM(false)});
+d.getElementById('toc').addEventListener('click',function(e){if(e.target.tagName==='A')openM(false)});
+d.addEventListener('keydown',function(e){if(e.key==='Escape')openM(false)});
+var pr=d.getElementById('prog');
+function sp(){var m=root.scrollHeight-root.clientHeight;pr.style.width=(m>0?root.scrollTop/m*100:0)+'%';}
+addEventListener('scroll',sp,{passive:true});sp();
+
+var S={c:{},t:{}};
+try{var x=JSON.parse(localStorage.getItem('fotogame')||'null');if(x&&x.c)S=x}catch(e){}
+function save(){try{localStorage.setItem('fotogame',JSON.stringify(S))}catch(e){}}
+var LV=[[0,'Curioso'],[150,'Apprendista'],[450,'Osservatore della luce'],[800,'Fotografo'],[1200,'Esperto'],[1550,'Maestro']];
+var secs=[].slice.call(d.querySelectorAll('.chap')),inputs=[].slice.call(d.querySelectorAll('input[data-k]'));
+inputs.forEach(function(i){i.checked=!!S.c[i.dataset.k]});
+var MAX=inputs.reduce(function(a,i){return a+ +i.dataset.x},0),last={lv:null,xp:0,done:{}};
+function lvl(xp){var l=0;LV.forEach(function(v,i){if(xp>=v[0])l=i});return l}
+function toast(m){var t=d.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('on')},3200)}
+/* indice e mappa */
+var toc=d.getElementById('toc'),map=d.getElementById('map');
+d.querySelectorAll('[data-nav]').forEach(function(s){
+ var h=s.querySelector('h2'),li=d.createElement('li'),a=d.createElement('a');a.href='#'+s.id;a.textContent=h.textContent;if(s.dataset.n)a.dataset.n=s.dataset.n;li.appendChild(a);toc.appendChild(li);
+});
+secs.forEach(function(s){var a=d.createElement('a');a.className='tile';a.id='tl'+s.dataset.n;a.href='#'+s.id;a.innerHTML='<b>'+s.dataset.n+'</b><span class="tp"></span>';map.appendChild(a)});
+function hints(){secs.forEach(function(s){var t=S.t[s.dataset.n];s.querySelectorAll('.ph').forEach(function(p){p.textContent=t?'Disponibile dal '+new Date(t+(+p.dataset.d)*864e5).toLocaleDateString('it-IT',{day:'numeric',month:'long'}):'La data si calcola da quando segni “Ho studiato”.'})})}
+function upd(silent){
+ var xp=0;inputs.forEach(function(i){if(i.checked)xp+=+i.dataset.x});
+ secs.forEach(function(s){
+  var n=s.dataset.n,ins=[].slice.call(s.querySelectorAll('input[data-k]')),c=ins.filter(function(i){return i.checked}).length,full=c===ins.length;
+  s.querySelector('#cm'+n).textContent=c+'/'+ins.length+' obiettivi';
+  s.querySelectorAll('.tabs button').forEach(function(b,k){var g='sfr'[k],gi=ins.filter(function(i){return i.dataset.g===g});b.querySelector('small').textContent=gi.filter(function(i){return i.checked}).length+'/'+gi.length});
+  var tl=d.getElementById('tl'+n);tl.classList.toggle('done',full);tl.querySelector('.tp').textContent=c+'/'+ins.length;
+  var ta=toc.querySelector('a[data-n="'+n+'"]');if(ta)ta.textContent=(full?'★ ':'')+s.querySelector('h2').textContent;
+  if(!silent&&full&&!last.done[n])toast('Capitolo '+n+' completato! ★');
+  last.done[n]=full;
+ });
+ var l=lvl(xp);
+ if(!silent&&last.lv!==null&&l>last.lv)toast('Nuovo livello: '+LV[l][1]);
+ last.lv=l;last.xp=xp;
+ d.getElementById('xpChip').textContent=LV[l][1]+' · '+xp+' XP';
+ d.getElementById('lvName').textContent='Livello '+(l+1)+': '+LV[l][1];
+ d.getElementById('xpBar').style.width=(MAX?xp/MAX*100:0)+'%';
+ var nx=LV[l+1];d.getElementById('xpTxt').textContent=xp+' / '+MAX+' XP'+(nx?' · prossimo livello a '+nx[0]+' XP':' · livello massimo');
+ var done=xp>=MAX;d.getElementById('bossLock').hidden=done;d.getElementById('bossOpen').hidden=!done;
+}
+d.addEventListener('change',function(e){var i=e.target;if(!i.dataset||!i.dataset.k)return;S.c[i.dataset.k]=i.checked;
+ if(i.dataset.g==='s'){var n=i.dataset.k.split('-')[0];if(i.checked)S.t[n]=Date.now();else delete S.t[n]}
+ save();hints();upd(false)});
+d.addEventListener('click',function(e){var b=e.target.closest('.tabs button');if(!b)return;var s=b.closest('section');
+ s.querySelectorAll('.tabs button').forEach(function(x){x.setAttribute('aria-selected',x===b?'true':'false')});
+ s.querySelectorAll('.pn').forEach(function(p,k){p.hidden=k!=b.dataset.t})});
+d.getElementById('resetBtn').addEventListener('click',function(){if(!confirm('Azzerare tutti i progressi su questo dispositivo?'))return;
+ S={c:{},t:{}};save();inputs.forEach(function(i){i.checked=false});hints();last.lv=null;upd(true)});
+hints();upd(true);
+/* etichette tabelle (versione telefono) */
+d.querySelectorAll('table.resp').forEach(function(t){
+ var hs=[].map.call(t.querySelectorAll('thead th'),function(x){return x.textContent});
+ t.querySelectorAll('tbody tr').forEach(function(tr){[].forEach.call(tr.children,function(td,i){td.setAttribute('data-label',hs[i]||'')})});
+});
+/* puntini del rumore (solo illustrativi) */
+function rng(s){return function(){s|=0;s=s+0x6D2B79F5|0;var t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+var NS='http://www.w3.org/2000/svg';
+function el(n,a){var e=d.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);return e}
+d.querySelectorAll('[data-noise]').forEach(function(g,gi){
+ var k=g.getAttribute('data-noise'),W=+g.getAttribute('data-w'),H=+g.getAttribute('data-h'),r=rng(7+gi*13),i;
+ if(k==='shot'){for(i=0;i<260;i++){g.appendChild(el('rect',{x:(r()*(W-3)).toFixed(1),y:(r()*(H-3)).toFixed(1),width:3,height:3,fill:'#f1d58b',opacity:(.12+r()*.8).toFixed(2)}))}}
+ if(k==='read'){for(i=0;i<22;i++){var y=(r()*(H-2)).toFixed(1),x=(r()*W*.5).toFixed(1);g.appendChild(el('rect',{x:x,y:y,width:(20+r()*(W-20-x)).toFixed(1),height:1.6,fill:'#e18e69',opacity:(.25+r()*.6).toFixed(2)}))}}
+ if(k==='heat'){for(i=0;i<9;i++){g.appendChild(el('circle',{cx:(6+r()*(W-12)).toFixed(1),cy:(6+r()*(H-12)).toFixed(1),r:(1.6+r()*1.8).toFixed(1),fill:'#ff8f6b',opacity:(.7+r()*.3).toFixed(2)}))}
+  for(i=0;i<60;i++){g.appendChild(el('rect',{x:(r()*(W-2)).toFixed(1),y:(r()*(H-2)).toFixed(1),width:2,height:2,fill:'#ef8868',opacity:(.1+r()*.25).toFixed(2)}))}}
+});
+})();
+</script>
+</body>
+</html>
